@@ -1,0 +1,8 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(477,5): warning MSB8004: El directorio Output no termina con una barra diagonal final. Esta instancia de compilación agregará la barra diagonal porque es necesaria para que se pueda evaluar correctamente el directorio Output.
+  game.cpp
+E:\uni\TJE\TJE2020_2D\src\image.h(61,89): warning C4018: '>=': no coinciden signed/unsigned
+E:\uni\TJE\TJE2020_2D\src\image.h(61,103): warning C4018: '>=': no coinciden signed/unsigned
+E:\uni\TJE\TJE2020_2D\src\image.h(104,20): warning C4018: '<': no coinciden signed/unsigned
+E:\uni\TJE\TJE2020_2D\src\image.h(105,21): warning C4018: '<': no coinciden signed/unsigned
+framework.obj : warning LNK4075: se omite '/EDITANDCONTINUE' debido a la especificación '/INCREMENTAL:NO'
+  visual.vcxproj -> E:\uni\TJE\TJE2020_2D\Game_Debug.exe
