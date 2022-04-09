@@ -19,7 +19,6 @@ public:
 	SDL_Window* window;
 	int window_width;
 	int window_height;
-	Vector4 framebuffer_rect; //area of the framebufer inside the window [x,y,w,h]
 
 	//some globals
 	long frame;
@@ -27,7 +26,25 @@ public:
 	float elapsed_time;
 	int fps;
 	bool must_exit;
+	float speed = 20.0f;
 
+	//enums
+	enum PLAYER_DIR {
+		UP = 3,
+		DOWN = 0,
+		LEFT = 2,
+		RIGHT = 1
+	};
+
+	//structs
+	struct sPlayer {
+		Vector2 pos;
+		bool isMoving;
+		PLAYER_DIR dir;
+	};
+
+	sPlayer player;
+	
 	//audio
 	Synth synth;
 
@@ -52,7 +69,7 @@ public:
 	void onResize(int width, int height);
 
 	//audio stuff
-	void enableAudio(int device = -1); //opens audio channel to play sound
+	void enableAudio(); //opens audio channel to play sound
 	void onAudio(float* buffer, unsigned int len, double time, SDL_AudioSpec &audio_spec); //called constantly to fill the audio buffer
 };
 

@@ -2,6 +2,7 @@
 #include "utils.h"
 #include "input.h"
 #include "image.h"
+#include "sprite.h"
 
 #include <cmath>
 
@@ -12,8 +13,6 @@ Image minifont;
 Image sprite;
 Color bgcolor(130, 80, 100);
 
-Vector2 pos;
-float speed = 60.0f;
 
 Game::Game(int window_width, int window_height, SDL_Window* window)
 {
@@ -33,8 +32,15 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	sprite.loadTGA("data/spritesheet.tga"); //example to load an sprite
 
 	//enableAudio(); //enable this line if you plan to add audio to your application
-	synth.playSample("data/coin.wav",1,true);
-	synth.osc1.amplitude = 0.5;
+	//synth.playSample("data/coin.wav",1,true);
+	//synth.osc1.amplitude = 0.5;
+}
+void RenderSprite(Game::sPlayer ply, Image* framebuffer, float time) {
+
+	int sprite_x = (int(time * 2.0f) % 4) * 14;
+	sprite_x = ply.isMoving ? sprite_x : 0;
+	int sprite_y = (ply.dir * 18);
+	framebuffer->drawImage(sprite, ply.pos.x, ply.pos.y, Area(sprite_x, sprite_y, 14, 18));	//draws only a part of an image
 }
 
 //what to do when the image has to be draw
@@ -51,36 +57,48 @@ void Game::render(void)
 		//framebuffer.drawLine( 0, 0, 100,100, Color::RED );		//draws a line
 		//framebuffer.drawImage( sprite, 0, 0 );					//draws full image
 		//framebuffer.drawImage( sprite, 0, 0, framebuffer.width, framebuffer.height );			//draws a scaled image
-		framebuffer.drawImage( sprite, pos.x, pos.y, Area(0,0,14,18) );	//draws only a part of an image
+		RenderSprite(player,&framebuffer, time);
 		//framebuffer.drawText( "Hello World", 0, 0, font );				//draws some text using a bitmap font in an image (assuming every char is 7x9)
-		//framebuffer.drawText( toString(100-time), 1, 10, minifont,4,6);	//draws some text using a bitmap font in an image (assuming every char is 4x6)
+		//framebuffer.drawText( toString(time), 1, 10, minifont,4,6);	//draws some text using a bitmap font in an image (assuming every char is 4x6)
 
 	//send image to screen
 	showFramebuffer(&framebuffer);
 }
-
+void checkIfInWindow(Vector2* mov,int width, int height) {
+	mov->x = mov->x > width || mov->x < 0 ? 0 : mov->x;
+	mov->y = mov->y > height || mov->y < 0 ? 0 : mov->y;
+}
 void Game::update(double seconds_elapsed)
 {
 	//Add here your update method
 	//...
+	Vector2 movement;
 
 	//Read the keyboard state, to see all the keycodes: https://wiki.libsdl.org/SDL_Keycode
 	if (Input::isKeyPressed(SDL_SCANCODE_UP)) //if key up
 	{
-		pos.y -= speed * seconds_elapsed;
+		movement.y -= speed * elapsed_time;
+		player.dir = PLAYER_DIR::UP;
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_DOWN)) //if key down
 	{
-		pos.y += speed * seconds_elapsed;
+		movement.y += speed * elapsed_time;
+		player.dir = PLAYER_DIR::DOWN;
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_LEFT)) //if key up
 	{
-		pos.x -= speed * seconds_elapsed;
+		movement.x -= speed * elapsed_time;
+		player.dir = PLAYER_DIR::LEFT;
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_RIGHT)) //if key down
 	{
-		pos.x += speed * seconds_elapsed;
+		movement.x += speed * elapsed_time;
+		player.dir = PLAYER_DIR::RIGHT;
 	}
+	
+	player.pos.x += movement.x; player.pos.y += movement.y;
+	checkIfInWindow(&player.pos, this->window_width, this->window_height);
+	player.isMoving = movement.x != 0.0f || movement.y != 0.0f;
 
 	//example of 'was pressed'
 	if (Input::wasKeyPressed(SDL_SCANCODE_A)) //if key A was pressed
@@ -175,9 +193,6 @@ void Game::showFramebuffer(Image* img)
 	width *= diff;
 	startx = -diff;
 
-	//compute area in pixels
-	framebuffer_rect.set(floor((startx * 0.5 + 0.5) * window_width), floor((starty * 0.5 + 0.5) * window_height), floor(width * 0.5 * window_width), floor(height * 0.5 * window_height) );
-
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0, 0.0); glVertex2f(startx, starty + height);
 	glTexCoord2f(1.0, 0.0); glVertex2f(startx + width, starty + height);
@@ -217,40 +232,17 @@ void AudioCallback(void*  userdata,
 	audio_time += len / (double)audio_spec.freq;
 }
 
-void Game::enableAudio(int device)
+void Game::enableAudio()
 {
-	const char* selected_device_name = NULL;
-	if (device != -1)
-	{
-		int i, count = SDL_GetNumAudioDevices(0);
-		if (device >= count)
-			device = 0; //default device
-
-		for (i = 0; i < count; ++i) {
-			const char* name = SDL_GetAudioDeviceName(i, 0);
-			if (i == device)
-				selected_device_name = name;
-			std::cout << (i == device ? " *" : " -") << " Audio device " << i << ": " << name << std::endl;
-		}
-	}
-
 	SDL_memset(&audio_spec, 0, sizeof(audio_spec)); /* or SDL_zero(want) */
 	audio_spec.freq = 48000;
 	audio_spec.format = AUDIO_F32;
 	audio_spec.channels = 1;
 	audio_spec.samples = 1024;
 	audio_spec.callback = AudioCallback; /* you wrote this function elsewhere. */
-
-	SDL_AudioDeviceID dev;
-	
-	if(selected_device_name)
-		dev = SDL_OpenAudioDevice(selected_device_name, 0, &audio_spec, &audio_spec, 0);
-	else
-		dev = SDL_OpenAudio(&audio_spec, &audio_spec);
-
-	if (dev < 0) {
+	if (SDL_OpenAudio(&audio_spec, &audio_spec) < 0) {
 		fprintf(stderr, "Couldn't open audio: %s\n", SDL_GetError());
-		return;
+		exit(-1);
 	}
 	SDL_PauseAudio(0);
 }
