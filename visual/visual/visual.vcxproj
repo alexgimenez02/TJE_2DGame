@@ -16,8 +16,11 @@
     <ClCompile Include="..\..\src\image.cpp" />
     <ClCompile Include="..\..\src\input.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
+    <ClCompile Include="..\..\src\sprite.cpp" />
     <ClCompile Include="..\..\src\synth.cpp" />
     <ClCompile Include="..\..\src\utils.cpp" />
+    <ClCompile Include="gamemap.cpp" />
+    <ClCompile Include="gamestate.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\framework.h" />
@@ -25,8 +28,11 @@
     <ClInclude Include="..\..\src\image.h" />
     <ClInclude Include="..\..\src\includes.h" />
     <ClInclude Include="..\..\src\input.h" />
+    <ClInclude Include="..\..\src\sprite.h" />
     <ClInclude Include="..\..\src\synth.h" />
     <ClInclude Include="..\..\src\utils.h" />
+    <ClInclude Include="gamemap.h" />
+    <ClInclude Include="gamestate.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9DC7275D-D453-4D7A-AF99-62C8D8DB059B}</ProjectGuid>
