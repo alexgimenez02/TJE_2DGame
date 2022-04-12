@@ -32,7 +32,7 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	sprite.loadTGA("data/spritesheet.tga"); //example to load an sprite
 
 	//enableAudio(); //enable this line if you plan to add audio to your application
-	//synth.playSample("data/coin.wav",1,true);
+	synth.playSample("data/Monster chase.wav",1,true);
 	//synth.osc1.amplitude = 0.5;
 }
 void RenderSprite(Game::sPlayer ply, Image* framebuffer, float time) {
@@ -53,12 +53,14 @@ void Game::render(void)
 	//...
 
 	//some new useful functions
-		framebuffer.fill( bgcolor );								//fills the image with one color
-		//framebuffer.drawLine( 0, 0, 100,100, Color::RED );		//draws a line
-		//framebuffer.drawImage( sprite, 0, 0 );					//draws full image
-		//framebuffer.drawImage( sprite, 0, 0, framebuffer.width, framebuffer.height );			//draws a scaled image
-		RenderSprite(player,&framebuffer, time);
-		//framebuffer.drawText( "Hello World", 0, 0, font );				//draws some text using a bitmap font in an image (assuming every char is 7x9)
+		framebuffer.fill( Color::BLACK);								//fills the image with one color
+		
+		//RenderSprite(player,&framebuffer, time);
+		blink++;
+		if (blink % 15 == 0 || blink % 15 == 1 || blink % 15 == 2 || blink % 15 == 3 || blink % 15 == 4 || blink % 15 == 5) framebuffer.drawRectangle(menu_rec_x, menu_rec_y, menu_rec_h, menu_rec_w, Color::WHITE);
+		framebuffer.drawRectangle(menu_rec_x + 1, menu_rec_y + 1, menu_rec_h - 2, menu_rec_w - 2, Color::BLACK);
+		framebuffer.drawText( "New Game", 15, 80, font );				//draws some text using a bitmap font in an image (assuming every char is 7x9)
+		framebuffer.drawText("Options", 15, 90, font);
 		//framebuffer.drawText( toString(time), 1, 10, minifont,4,6);	//draws some text using a bitmap font in an image (assuming every char is 4x6)
 
 	//send image to screen
@@ -79,11 +81,16 @@ void Game::update(double seconds_elapsed)
 	{
 		movement.y -= speed * elapsed_time;
 		player.dir = PLAYER_DIR::UP;
+
+		menu_rec_y -= 10;
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_DOWN)) //if key down
 	{
 		movement.y += speed * elapsed_time;
 		player.dir = PLAYER_DIR::DOWN;
+
+		menu_rec_y += 10;
+		
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_LEFT)) //if key up
 	{
@@ -99,6 +106,8 @@ void Game::update(double seconds_elapsed)
 	player.pos.x += movement.x; player.pos.y += movement.y;
 	checkIfInWindow(&player.pos, this->window_width, this->window_height);
 	player.isMoving = movement.x != 0.0f || movement.y != 0.0f;
+	if (menu_rec_y < 80) menu_rec_y = 80;
+	else if (menu_rec_y > 90) menu_rec_y = 90;
 
 	//example of 'was pressed'
 	if (Input::wasKeyPressed(SDL_SCANCODE_A)) //if key A was pressed

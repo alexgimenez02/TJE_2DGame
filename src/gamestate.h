@@ -1,6 +1,7 @@
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
 #define MAX_ITEMS 100
+#include "includes.h"
 class gamestate
 {
 	struct sItem {

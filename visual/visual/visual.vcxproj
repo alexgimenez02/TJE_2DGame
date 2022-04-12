@@ -19,8 +19,6 @@
     <ClCompile Include="..\..\src\sprite.cpp" />
     <ClCompile Include="..\..\src\synth.cpp" />
     <ClCompile Include="..\..\src\utils.cpp" />
-    <ClCompile Include="gamemap.cpp" />
-    <ClCompile Include="gamestate.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\framework.h" />
