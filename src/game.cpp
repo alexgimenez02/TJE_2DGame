@@ -5,6 +5,7 @@
 #include "sprite.h"
 
 #include <cmath>
+using namespace std;
 
 Game* Game::instance = NULL;
 
@@ -29,18 +30,36 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 
 	font.loadTGA("data/bitmap-font-white.tga"); //load bitmap-font image
 	minifont.loadTGA("data/mini-font-white-4x6.tga"); //load bitmap-font image
-	sprite.loadTGA("data/spritesheet.tga"); //example to load an sprite
+	sprite.loadTGA("data/Sprites/spritesheet1.tga"); //example to load an sprite
 
 	//enableAudio(); //enable this line if you plan to add audio to your application
-	synth.playSample("data/Monster chase.wav",1,true);
+	//synth.playSample("data/Monster chase.wav",1,true);
 	//synth.osc1.amplitude = 0.5;
 }
-void RenderSprite(Game::sPlayer ply, Image* framebuffer, float time) {
+void RenderSprite(Game::sPlayer ply, Image* framebuffer, float time, int sprite_width, int sprite_height) {
 
-	int sprite_x = (int(time * 2.0f) % 4) * 14;
-	sprite_x = ply.isMoving ? sprite_x : 0;
-	int sprite_y = (ply.dir * 18);
-	framebuffer->drawImage(sprite, ply.pos.x, ply.pos.y, Area(sprite_x, sprite_y, 14, 18));	//draws only a part of an image
+
+	//Astronaut:
+	/* Initial position: x = 0, y = 0, width = 12, height = 17
+	*
+	*/
+	int sprite_x, sprite_y;
+	if (ply.death) {
+		sprite_x = ((int)(time * 4.0f) % 4);
+		sprite_y = 6;
+	}
+	else if (ply.isJumping) {
+		sprite_x = ((int)(time * 2.0f) % 5);
+		sprite_y = ply.dir + 4;
+	}
+	else {
+		sprite_x = ((int)(time * 2.0f) % 6);
+		sprite_y = ((ply.isMoving ? 2 : 0) + ply.dir);
+	}
+
+	sprite_x *= sprite_width;
+	sprite_y *= sprite_height;
+	framebuffer->drawImage(sprite, ply.pos.x, ply.pos.y, Area(sprite_x, sprite_y, sprite_width, sprite_height));	//draws only a part of an image
 }
 
 //what to do when the image has to be draw
@@ -53,14 +72,16 @@ void Game::render(void)
 	//...
 
 	//some new useful functions
-		framebuffer.fill( Color::BLACK);								//fills the image with one color
+		framebuffer.fill( bgcolor);								//fills the image with one color
 		
-		//RenderSprite(player,&framebuffer, time);
-		blink++;
-		if (blink % 15 == 0 || blink % 15 == 1 || blink % 15 == 2 || blink % 15 == 3 || blink % 15 == 4 || blink % 15 == 5) framebuffer.drawRectangle(menu_rec_x, menu_rec_y, menu_rec_h, menu_rec_w, Color::WHITE);
-		framebuffer.drawRectangle(menu_rec_x + 1, menu_rec_y + 1, menu_rec_h - 2, menu_rec_w - 2, Color::BLACK);
-		framebuffer.drawText( "New Game", 15, 80, font );				//draws some text using a bitmap font in an image (assuming every char is 7x9)
-		framebuffer.drawText("Options", 15, 90, font);
+		if(state == 1) RenderSprite(player,&framebuffer, time,sprite_width,sprite_height);
+		if (state == 0) {
+			blink++;
+			if (blink % 15 == 0 || blink % 15 == 1 || blink % 15 == 2 || blink % 15 == 3 || blink % 15 == 4 || blink % 15 == 5) framebuffer.drawRectangle(menu_rec_x, menu_rec_y, menu_rec_h, menu_rec_w, Color::WHITE);
+			framebuffer.drawRectangle(menu_rec_x + 1, menu_rec_y + 1, menu_rec_h - 2, menu_rec_w - 2, bgcolor);
+			framebuffer.drawText("New Game", 15, 80, font);				//draws some text using a bitmap font in an image (assuming every char is 7x9)
+			framebuffer.drawText("Options", 15, 90, font);
+		}
 		//framebuffer.drawText( toString(time), 1, 10, minifont,4,6);	//draws some text using a bitmap font in an image (assuming every char is 4x6)
 
 	//send image to screen
@@ -79,17 +100,21 @@ void Game::update(double seconds_elapsed)
 	//Read the keyboard state, to see all the keycodes: https://wiki.libsdl.org/SDL_Keycode
 	if (Input::isKeyPressed(SDL_SCANCODE_UP)) //if key up
 	{
-		movement.y -= speed * elapsed_time;
-		player.dir = PLAYER_DIR::UP;
-
-		menu_rec_y -= 10;
+		if (state == 1) {
+			movement.y -= speed * elapsed_time;
+			
+		}
+		if(state == 0)
+			menu_rec_y -= 10;
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_DOWN)) //if key down
 	{
-		movement.y += speed * elapsed_time;
-		player.dir = PLAYER_DIR::DOWN;
-
-		menu_rec_y += 10;
+		if (state == 1) {
+			movement.y += speed * elapsed_time;
+			
+		}
+		if(state == 0)
+			menu_rec_y += 10;
 		
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_LEFT)) //if key up
@@ -105,16 +130,38 @@ void Game::update(double seconds_elapsed)
 	
 	player.pos.x += movement.x; player.pos.y += movement.y;
 	checkIfInWindow(&player.pos, this->window_width, this->window_height);
+	if (player.isJumping) {
+		player.pos.y -= jump_speed;
+		jump_speed -= elapsed_time;
+		if (jump_speed < 0) player.isJumping = false;
+		
+	}
 	player.isMoving = movement.x != 0.0f || movement.y != 0.0f;
-	if (menu_rec_y < 80) menu_rec_y = 80;
-	else if (menu_rec_y > 90) menu_rec_y = 90;
+	
+	
+	if (state == 0) {
+		if (menu_rec_y < 80) menu_rec_y = 80;
+		else if (menu_rec_y > 90) menu_rec_y = 90;
+	}
 
 	//example of 'was pressed'
-	if (Input::wasKeyPressed(SDL_SCANCODE_A)) //if key A was pressed
+	if (Input::isKeyPressed(SDL_SCANCODE_A)) //if key A was pressed
 	{
+		if (state == 0) {
+			if (menu_rec_y == 80)
+				state = 1;
+		}
+		else {
+
+			player.isJumping = true;
+			jump_speed = 1.0;
+		}
 	}
 	if (Input::wasKeyPressed(SDL_SCANCODE_Z)) //if key Z was pressed
 	{
+	}
+	if (Input::isKeyPressed(SDL_SCANCODE_P)) {
+		!player.death;
 	}
 
 	//to read the gamepad state

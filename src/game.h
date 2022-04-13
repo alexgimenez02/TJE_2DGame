@@ -29,20 +29,22 @@ public:
 	float speed = 20.0f;
 	int blink = 0;
 	int menu_rec_x = 14, menu_rec_y = 79, menu_rec_h = 59, menu_rec_w = 11;
-
+	int state = 0;
+	int sprite_width = 14;
+	int sprite_height = 17;
+	float jump_speed = 0.0f;
 	//enums
 	enum PLAYER_DIR {
-		UP = 3,
-		DOWN = 0,
-		LEFT = 2,
-		RIGHT = 1
+		RIGHT = 0,
+		LEFT = 1
 	};
 
 	//structs
 	struct sPlayer {
 		Vector2 pos;
-		bool isMoving;
+		bool isMoving = false, isJumping = false, death = false;
 		PLAYER_DIR dir;
+
 	};
 
 	sPlayer player;
