@@ -133,8 +133,11 @@ void Game::update(double seconds_elapsed)
 	if (player.isJumping) {
 		player.pos.y -= jump_speed;
 		jump_speed -= elapsed_time;
-		if (jump_speed < 0) player.isJumping = false;
+		if (jump_speed < -1.05f) player.isJumping = false;
 		
+	}
+	if (player.death) {
+		player.death = ++iter % 10 == 0 ? false : true;
 	}
 	player.isMoving = movement.x != 0.0f || movement.y != 0.0f;
 	
@@ -152,7 +155,6 @@ void Game::update(double seconds_elapsed)
 				state = 1;
 		}
 		else {
-
 			player.isJumping = true;
 			jump_speed = 1.0;
 		}
@@ -161,7 +163,7 @@ void Game::update(double seconds_elapsed)
 	{
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_P)) {
-		!player.death;
+		player.death = true;
 	}
 
 	//to read the gamepad state

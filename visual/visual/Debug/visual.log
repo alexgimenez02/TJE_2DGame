@@ -4,6 +4,16 @@ D:\TJE_2D\TJE_2DGame\src\image.h(61,89): warning C4018: '>=': no coinciden signe
 D:\TJE_2D\TJE_2DGame\src\image.h(61,103): warning C4018: '>=': no coinciden signed/unsigned
 D:\TJE_2D\TJE_2DGame\src\image.h(104,20): warning C4018: '<': no coinciden signed/unsigned
 D:\TJE_2D\TJE_2DGame\src\image.h(105,21): warning C4018: '<': no coinciden signed/unsigned
-D:\TJE_2D\TJE_2DGame\src\game.cpp(164,3): warning C4552: "!": el resultado de la expresión no se usa
+  main.cpp
+D:\TJE_2D\TJE_2DGame\src\image.h(61,89): warning C4018: '>=': no coinciden signed/unsigned
+D:\TJE_2D\TJE_2DGame\src\image.h(61,103): warning C4018: '>=': no coinciden signed/unsigned
+D:\TJE_2D\TJE_2DGame\src\image.h(104,20): warning C4018: '<': no coinciden signed/unsigned
+D:\TJE_2D\TJE_2DGame\src\image.h(105,21): warning C4018: '<': no coinciden signed/unsigned
+  utils.cpp
+D:\TJE_2D\TJE_2DGame\src\image.h(61,89): warning C4018: '>=': no coinciden signed/unsigned
+D:\TJE_2D\TJE_2DGame\src\image.h(61,103): warning C4018: '>=': no coinciden signed/unsigned
+D:\TJE_2D\TJE_2DGame\src\image.h(104,20): warning C4018: '<': no coinciden signed/unsigned
+D:\TJE_2D\TJE_2DGame\src\image.h(105,21): warning C4018: '<': no coinciden signed/unsigned
+  Generando código...
 framework.obj : warning LNK4075: se omite '/EDITANDCONTINUE' debido a la especificación '/INCREMENTAL:NO'
   visual.vcxproj -> D:\TJE_2D\TJE_2DGame\Game_Debug.exe
