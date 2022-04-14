@@ -16,3 +16,4 @@ Sprite::Sprite(const char* filename,SPRITE_TYPE s_n,int sw, int sh) {
 void Sprite::DrawSprite(Image* framebuffer, int x, int y,int ax, int ay) {
 	framebuffer->drawImage(sprite,x,y,Area(ax, ay, sprite_width, sprite_height));
 }
+

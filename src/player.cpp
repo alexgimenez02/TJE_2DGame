@@ -5,6 +5,7 @@ Player::Player() {}
 Player::Player(Sprite *spr, int x, int y) {
 	this->sprite = *spr;
 	pos = Vector2(x, y);
+	dir = RIGHT;
 }
 
 void Player::RenderPlayer(Image* framebuffer, float time, int sprite_width, int sprite_height){
@@ -30,6 +31,27 @@ void Player::MovePlayer(Vector2 movement){
 	isMoving = movement.x != 0.0f || movement.y != 0.0f;
 	pos += movement;
 }
-void Player::Jump(Vector2 movement) {
+void Player::Jump(float speed) {
+	if (speed != 0.0) {
+		
+		if (speed < -1.05f) {
+			speed = 0.0f;
+			
+		}
+		pos.y -= speed;
+		isJumping = speed == 0.0f ? false : true;
+	}
+	
+}
+void Player::setPosition(Vector2 p)
+{
+	pos = p;
+}
+void Player::die(bool which)
+{
+	death = which;
+}
 
+bool Player::distanceToShip(Vector2 ship_pos) {
+	return pos.distance(ship_pos) < 10.0f;
 }

@@ -27,30 +27,17 @@ public:
     float time;
 	float elapsed_time;
 	int fps;
-	bool must_exit;
+	bool must_exit, death = false;
 	float speed = 20.0f;
 	int blink = 0, iter = 0;
 	int menu_rec_x = 14, menu_rec_y = 79, menu_rec_h = 59, menu_rec_w = 11;
 	int state = 0;
 	int sprite_width = 14, ship_width = 30;
-	int sprite_height = 17, ship_height = 28;
+	int sprite_height = 17, ship_height = 30;
 	float jump_speed = 0.0f;
 	Player player;
-	//structs
-	/*struct sPlayer {
-		Vector2 pos;
-		bool isMoving = false, isJumping = false, death = false;
-		PLAYER_DIR dir;
+	Ship ship;
 
-	};*/
-	struct sShip {
-		Vector2 pos;
-		bool isMoving = false, playerInside = false;
-		PLAYER_DIR dir;
-	};
-
-	//sPlayer player;
-	sShip shipStruct;
 	
 	//audio
 	Synth synth;

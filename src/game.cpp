@@ -33,7 +33,9 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	minifont.loadTGA("data/mini-font-white-4x6.tga"); //load bitmap-font image
 	player = Player(&Sprite("data/Sprites/spritesheet1.tga", SPRITE_TYPE::PLAYER, 14, 17),0,50);
 	//sprite.loadTGA(); //example to load an sprite
-	ship.loadTGA("data/Sprites/spritesheet_ship.tga");
+	ship = Ship(&Sprite("data/Sprites/spritesheet_ship.tga",SPRITE_TYPE::SHIP, 30, 30),10,50);
+	//ship.getSprite()->ResizeSprite(15,12);
+	
 
 	//enableAudio(); //enable this line if you plan to add audio to your application
 	//synth.playSample("data/Monster chase.wav",1,true);
@@ -64,7 +66,7 @@ void RenderSprite(Game::sPlayer ply, Image* framebuffer, float time, int sprite_
 }
 */
 
-
+/*
 void RenderShip(Game::sShip shp, Image* framebuffer, float time, int ship_width, int ship_height) {
 	int ship_x, ship_y;
 	if (shp.playerInside) {
@@ -85,7 +87,7 @@ void RenderShip(Game::sShip shp, Image* framebuffer, float time, int ship_width,
 	ship_y *= ship_height;
 	framebuffer->drawImage(ship, shp.pos.x, shp.pos.y, Area(ship_x, ship_y, ship_width, ship_height));
 }
-
+*/
 //what to do when the image has to be draw
 void Game::render(void)
 {
@@ -108,8 +110,8 @@ void Game::render(void)
 		}
 		//framebuffer.drawText( toString(time), 1, 10, minifont,4,6);	//draws some text using a bitmap font in an image (assuming every char is 4x6)
 		if (state == 1) {
-			if (!shipStruct.playerInside) player.RenderPlayer(&framebuffer, time, sprite_width, sprite_height);
-			RenderShip(shipStruct, &framebuffer, time, ship_width, ship_height);
+			ship.RenderShip(&framebuffer, time, ship_width, ship_height); 
+			if (!ship.getPlayerInside()) player.RenderPlayer(&framebuffer, time, sprite_width, sprite_height);
 		}
 	//send image to screen
 	showFramebuffer(&framebuffer);
@@ -129,7 +131,7 @@ void Game::update(double seconds_elapsed)
 	{
 		if (state == 1) {
 			movement.y -= speed * elapsed_time;
-			if (shipStruct.playerInside) ship_movement.y -= speed * elapsed_time;
+			if (ship.getPlayerInside()) ship_movement.y -= speed * elapsed_time;
 		}
 		if(state == 0)
 			menu_rec_y -= 10;
@@ -138,7 +140,7 @@ void Game::update(double seconds_elapsed)
 	{
 		if (state == 1) {
 			movement.y += speed * elapsed_time;
-			if (shipStruct.playerInside) ship_movement.y += speed * elapsed_time;
+			if (ship.getPlayerInside()) ship_movement.y += speed * elapsed_time;
 		}
 		if(state == 0)
 			menu_rec_y += 10;
@@ -147,29 +149,23 @@ void Game::update(double seconds_elapsed)
 	if (Input::isKeyPressed(SDL_SCANCODE_LEFT)) //if key up
 	{
 		movement.x -= speed * elapsed_time;
-		if (shipStruct.playerInside) ship_movement.x -= speed * elapsed_time;
+		if (ship.getPlayerInside()) ship_movement.x -= speed * elapsed_time;
 		
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_RIGHT)) //if key down
 	{
 		movement.x += speed * elapsed_time;
-		if (shipStruct.playerInside) ship_movement.x += speed * elapsed_time;
+		if (ship.getPlayerInside()) ship_movement.x += speed * elapsed_time;
 		
 	}
 	
 	player.MovePlayer(movement);
-	shipStruct.pos += ship_movement;
+	player.Jump(jump_speed -= elapsed_time);
+	ship.ShipMovement(ship_movement);
 	//checkIfInWindow(&player.pos, this->window_width, this->window_height);
-	/*if (player.isJumping) {
-		player.pos.y -= jump_speed;
-		jump_speed -= elapsed_time;
-		if (jump_speed < -1.05f) player.isJumping = false;
-		
+	if (death) {
+		death = ++iter % 10 == 0 ? false : true;
 	}
-	if (player.death) {
-		player.death = ++iter % 10 == 0 ? false : true;
-	}*/
-	shipStruct.isMoving = ship_movement.x != 0.0f;
 	
 	
 	if (state == 0) {
@@ -183,29 +179,34 @@ void Game::update(double seconds_elapsed)
 		if (state == 0) {
 			if (menu_rec_y == 80)
 				state = 1;
+			Sleep(50);
 		}
 		else {
-			//player.isJumping = true;
 			jump_speed = 1.0;
 		}
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_Z)) //if key Z was pressed
 	{
-		/*if (player.pos.distance(Vector2(shipStruct.pos.x, shipStruct.pos.y)) < 10.0f && !shipStruct.playerInside) {
-			shipStruct.playerInside = true;
+		if (player.distanceToShip(ship.getPosition()) && ship.getPlayerInside()) {
+			ship.setPlayerInside();
 			Sleep(50);
 		}
 		else {
-			if (shipStruct.playerInside) {
-				player.pos.x = shipStruct.pos.x - 12.0f;
-				player.pos.y = shipStruct.pos.y;
+			if (ship.getPlayerInside()) {
+				Vector2 last_ship_pos = ship.getPosition();
+				last_ship_pos.x -= 12.0f;
+				player.setPosition(last_ship_pos);
+				ship.setDirection(UP);
 			}
-			shipStruct.playerInside = false;
+			ship.setPlayerInside();
 			Sleep(50);
-		}*/
+		}
+		cout << (ship.getPlayerInside() ? "Player entered the ship" : "Player exited the ship!") << endl;
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_P)) {
-		//player.death = true;
+		death = true;
+		player.die(death);
+		
 	}
 
 	//to read the gamepad state

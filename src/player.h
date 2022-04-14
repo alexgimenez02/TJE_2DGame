@@ -16,7 +16,7 @@ private:
 	Sprite sprite;
 	Vector2 pos;
 	bool isMoving = false, isJumping = false, death = false;
-	PLAYER_DIR dir = LEFT;
+	PLAYER_DIR dir;
 public:
 	Player();
 	//ctor
@@ -24,7 +24,10 @@ public:
 	//Methods
 	void RenderPlayer(Image* framebuffer, float time, int sprite_width, int sprite_height);
 	void MovePlayer(Vector2 movement);
-	void Jump(Vector2 movement);
+	void Jump(float speed);
+	void setPosition(Vector2 p);
+	void die(bool which);
+	bool distanceToShip(Vector2 ship_pos);
 	 
 
 };

@@ -18,7 +18,10 @@ class Texture;
 
 enum PLAYER_DIR {
 	RIGHT = 0,
-	LEFT = 1
+	LEFT = 1,
+	UP = 2,
+	DOWN = 3
+
 };
 enum SPRITE_TYPE {
 	PLAYER = 0,
