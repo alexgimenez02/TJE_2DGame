@@ -11,9 +11,22 @@
 
 #include "includes.h"
 #include "framework.h"
+using namespace std;
 
 class Shader;
 class Texture;
+
+enum PLAYER_DIR {
+	RIGHT = 0,
+	LEFT = 1
+};
+enum SPRITE_TYPE {
+	PLAYER = 0,
+	SHIP = 1,
+	OBJECT = 2,
+	MONSTER = 3,
+	EMPTY = -1
+};
 
 //General functions **************
 long getTime(); //returns time since computer started (in milliseconds)
