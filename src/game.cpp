@@ -8,12 +8,12 @@
 using namespace std;
 
 Game* Game::instance = NULL;
-
-Image font;
-Image minifont;
-Image sprite;
-Image ship;
-Color bgcolor(130, 80, 100);
+Color bgcolor(30, 80, 120);
+Stage* current_stage;
+MainMenuStage* main_menu_stage;
+GameStage* game_stage;
+ControlsStage* controls_stage;
+GameOverStage* game_over_stage;
 
 
 Game::Game(int window_width, int window_height, SDL_Window* window)
@@ -29,65 +29,27 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	time = 0.0f;
 	elapsed_time = 0.0f;
 
+	main_menu.loadTGA("data/main_menu.tga"); 
 	font.loadTGA("data/bitmap-font-white.tga"); //load bitmap-font image
 	minifont.loadTGA("data/mini-font-white-4x6.tga"); //load bitmap-font image
+	gameOver.loadTGA("data/game_over.tga");
 	player = Player(&Sprite("data/Sprites/spritesheet1.tga", SPRITE_TYPE::PLAYER, 14, 17),0,50);
 	//sprite.loadTGA(); //example to load an sprite
 	ship = Ship(&Sprite("data/Sprites/spritesheet_ship.tga",SPRITE_TYPE::SHIP, 30, 30),10,50);
 	//ship.getSprite()->ResizeSprite(15,12);
 	
+	
+	enableAudio(); //enable this line if you plan to add audio to your application
+	
+	main_menu_stage = new MainMenuStage();
+	game_stage = new GameStage();
+	controls_stage = new ControlsStage();
+	game_over_stage = new GameOverStage();
+	current_stage = main_menu_stage;
 
-	//enableAudio(); //enable this line if you plan to add audio to your application
 	//synth.playSample("data/Monster chase.wav",1,true);
 	//synth.osc1.amplitude = 0.5;
-}/*
-void RenderSprite(Game::sPlayer ply, Image* framebuffer, float time, int sprite_width, int sprite_height) {
-
-	//Astronaut:
-	// Initial position: x = 0, y = 0, width = 12, height = 17
-	
-	int sprite_x, sprite_y;
-	if (ply.death) {
-		sprite_x = ((int)(time * 4.0f) % 4);
-		sprite_y = 6;
-	}
-	else if (ply.isJumping) {
-		sprite_x = ((int)(time * 2.0f) % 5);
-		sprite_y = ply.dir + 4;
-	}
-	else {
-		sprite_x = ((int)(time * 2.0f) % 6);
-		sprite_y = ((ply.isMoving ? 2 : 0) + ply.dir);
-	}
-
-	sprite_x *= sprite_width;
-	sprite_y *= sprite_height;
-	framebuffer->drawImage(sprite, ply.pos.x, ply.pos.y, Area(sprite_x, sprite_y, sprite_width, sprite_height));	//draws only a part of an image
 }
-*/
-
-/*
-void RenderShip(Game::sShip shp, Image* framebuffer, float time, int ship_width, int ship_height) {
-	int ship_x, ship_y;
-	if (shp.playerInside) {
-		if (shp.isMoving) {
-			ship_x = ((int)(time * 2.0f) % 3);
-			ship_y = shp.dir + 1;
-		}
-		else {
-			ship_x = ((int)(time * 2.0f) % 4);
-			ship_y = 0;
-		}
-	}
-	else {
-		ship_x = 0;
-		ship_y = 0;
-	}
-	ship_x *= ship_width;
-	ship_y *= ship_height;
-	framebuffer->drawImage(ship, shp.pos.x, shp.pos.y, Area(ship_x, ship_y, ship_width, ship_height));
-}
-*/
 //what to do when the image has to be draw
 void Game::render(void)
 {
@@ -98,22 +60,21 @@ void Game::render(void)
 	//...
 
 	//some new useful functions
-		framebuffer.fill( bgcolor);								//fills the image with one color
 		
 		
-		if (state == 0) {
-			blink++;
-			if (blink % 15 == 0 || blink % 15 == 1 || blink % 15 == 2 || blink % 15 == 3 || blink % 15 == 4 || blink % 15 == 5) framebuffer.drawRectangle(menu_rec_x, menu_rec_y, menu_rec_h, menu_rec_w, Color::WHITE);
-			framebuffer.drawRectangle(menu_rec_x + 1, menu_rec_y + 1, menu_rec_h - 2, menu_rec_w - 2, bgcolor);
-			framebuffer.drawText("New Game", 15, 80, font);				//draws some text using a bitmap font in an image (assuming every char is 7x9)
-			framebuffer.drawText("Options", 15, 90, font);
-		}
+		
+		if (state == 0)
+			current_stage = main_menu_stage;
+		
 		//framebuffer.drawText( toString(time), 1, 10, minifont,4,6);	//draws some text using a bitmap font in an image (assuming every char is 4x6)
-		if (state == 1) {
-			ship.RenderShip(&framebuffer, time, ship_width, ship_height); 
-			if (!ship.getPlayerInside()) player.RenderPlayer(&framebuffer, time, sprite_width, sprite_height);
-		}
+		if (state == 1) 
+			current_stage = game_stage;
+		if (state == 2)
+			current_stage = controls_stage;
+		if (state == 3)
+			current_stage = game_over_stage;
 	//send image to screen
+	current_stage->render(&framebuffer);
 	showFramebuffer(&framebuffer);
 }
 void checkIfInWindow(Vector2* mov,int width, int height) {
@@ -122,68 +83,28 @@ void checkIfInWindow(Vector2* mov,int width, int height) {
 }
 void Game::update(double seconds_elapsed)
 {
+	current_stage->update();
 	//Add here your update method
 	//...
 	Vector2 movement, ship_movement;
 
 	//Read the keyboard state, to see all the keycodes: https://wiki.libsdl.org/SDL_Keycode
 	if (Input::isKeyPressed(SDL_SCANCODE_UP)) //if key up
-	{
-		if (state == 1) {
-			movement.y -= speed * elapsed_time;
-			if (ship.getPlayerInside()) ship_movement.y -= speed * elapsed_time;
-		}
-		if(state == 0)
-			menu_rec_y -= 10;
+	{		
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_DOWN)) //if key down
 	{
-		if (state == 1) {
-			movement.y += speed * elapsed_time;
-			if (ship.getPlayerInside()) ship_movement.y += speed * elapsed_time;
-		}
-		if(state == 0)
-			menu_rec_y += 10;
-		
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_LEFT)) //if key up
-	{
-		movement.x -= speed * elapsed_time;
-		if (ship.getPlayerInside()) ship_movement.x -= speed * elapsed_time;
-		
+	{		
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_RIGHT)) //if key down
 	{
-		movement.x += speed * elapsed_time;
-		if (ship.getPlayerInside()) ship_movement.x += speed * elapsed_time;
-		
-	}
-	
-	player.MovePlayer(movement);
-	player.Jump(jump_speed -= elapsed_time);
-	ship.ShipMovement(ship_movement);
-	//checkIfInWindow(&player.pos, this->window_width, this->window_height);
-	if (death) {
-		death = ++iter % 10 == 0 ? false : true;
-	}
-	
-	
-	if (state == 0) {
-		if (menu_rec_y < 80) menu_rec_y = 80;
-		else if (menu_rec_y > 90) menu_rec_y = 90;
 	}
 
 	//example of 'was pressed'
 	if (Input::isKeyPressed(SDL_SCANCODE_A)) //if key A was pressed
 	{
-		if (state == 0) {
-			if (menu_rec_y == 80)
-				state = 1;
-			Sleep(50);
-		}
-		else {
-			jump_speed = 1.0;
-		}
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_Z)) //if key Z was pressed
 	{
@@ -201,14 +122,13 @@ void Game::update(double seconds_elapsed)
 			ship.setPlayerInside();
 			Sleep(50);
 		}
-		cout << (ship.getPlayerInside() ? "Player entered the ship" : "Player exited the ship!") << endl;
+		//cout << (ship.getPlayerInside() ? "Player entered the ship" : "Player exited the ship!") << endl;
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_P)) {
 		death = true;
 		player.die(death);
-		
+		state = 3;
 	}
-
 	//to read the gamepad state
 	if (Input::gamepads[0].isButtonPressed(A_BUTTON)) //if the A button is pressed
 	{

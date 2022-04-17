@@ -3,6 +3,8 @@
 */
 #ifndef UTILS_H
 #define UTILS_H
+#define WIN_WIDTH 160
+#define WIN_HEIGHT 120
 
 #include <string>
 #include <sstream>
@@ -12,6 +14,7 @@
 #include "includes.h"
 #include "framework.h"
 using namespace std;
+
 
 class Shader;
 class Texture;

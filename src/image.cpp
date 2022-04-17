@@ -224,11 +224,14 @@ void Image::drawRectangle(int x, int y, int w, int h, const Color& c)
 	for (int i = startx; i < endx; ++i)
 		for (int j = starty; j < endy; ++j)
 		{
-			int pos = j * width + i;
-			if (c.a == 255)
-				pixels[pos] = c;
-			else
-				pixels[pos] = blendColors(c, pixels[pos]);
+			if(j == starty || j == endy - 1 || i == startx || i == endx - 1) {
+				int pos = j * width + i;
+				if (c.a == 255)
+					pixels[pos] = c;
+				else
+					pixels[pos] = blendColors(c, pixels[pos]);
+			}
+				
 		}
 }
 

@@ -11,6 +11,7 @@
 #include "synth.h"
 #include "player.h"
 #include "ship.h"
+#include "stage.h"
 
 class Game
 {
@@ -38,6 +39,7 @@ public:
 	Player player;
 	Ship ship;
 
+	Image font, minifont, sprite, main_menu, gameOver, controls;
 	
 	//audio
 	Synth synth;

@@ -19,6 +19,7 @@
     <ClCompile Include="..\..\src\player.cpp" />
     <ClCompile Include="..\..\src\ship.cpp" />
     <ClCompile Include="..\..\src\sprite.cpp" />
+    <ClCompile Include="..\..\src\stage.cpp" />
     <ClCompile Include="..\..\src\synth.cpp" />
     <ClCompile Include="..\..\src\tilemap.cpp" />
     <ClCompile Include="..\..\src\utils.cpp" />
@@ -32,6 +33,7 @@
     <ClInclude Include="..\..\src\player.h" />
     <ClInclude Include="..\..\src\ship.h" />
     <ClInclude Include="..\..\src\sprite.h" />
+    <ClInclude Include="..\..\src\stage.h" />
     <ClInclude Include="..\..\src\synth.h" />
     <ClInclude Include="..\..\src\tilemap.h" />
     <ClInclude Include="..\..\src\utils.h" />

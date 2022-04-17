@@ -16,6 +16,7 @@
       <Filter>ObjetosDeEscena</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\tilemap.cpp" />
+    <ClCompile Include="..\..\src\stage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\framework.h" />
@@ -33,6 +34,7 @@
       <Filter>ObjetosDeEscena</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\tilemap.h" />
+    <ClInclude Include="..\..\src\stage.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ObjetosDeEscena">

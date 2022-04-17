@@ -23,6 +23,8 @@ public:
 	
 
 	void DrawSprite(Image* framebuffer, int x, int y, int ax, int ay);
+	int getHeight();
+	int getWidth();
 };
 
 #endif

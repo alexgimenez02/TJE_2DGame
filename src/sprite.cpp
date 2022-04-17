@@ -17,3 +17,13 @@ void Sprite::DrawSprite(Image* framebuffer, int x, int y,int ax, int ay) {
 	framebuffer->drawImage(sprite,x,y,Area(ax, ay, sprite_width, sprite_height));
 }
 
+int Sprite::getHeight()
+{
+	return sprite_height;
+}
+
+int Sprite::getWidth()
+{
+	return sprite_width;
+}
+

@@ -30,6 +30,11 @@ void Player::MovePlayer(Vector2 movement){
 	else dir = LEFT;
 	isMoving = movement.x != 0.0f || movement.y != 0.0f;
 	pos += movement;
+	if (pos.x >= WIN_WIDTH - sprite.getWidth()) pos.x = WIN_WIDTH - (sprite.getWidth() - 1);
+	else if (pos.x < 0) pos.x = 0;
+	if (pos.y >= WIN_HEIGHT - sprite.getHeight()) pos.y = WIN_HEIGHT - sprite.getHeight();
+	else if (pos.y < 0) pos.y = 0;
+	
 }
 void Player::Jump(float speed) {
 	if (speed != 0.0) {
