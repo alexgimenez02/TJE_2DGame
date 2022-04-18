@@ -14,6 +14,7 @@ MainMenuStage* main_menu_stage;
 GameStage* game_stage;
 ControlsStage* controls_stage;
 GameOverStage* game_over_stage;
+Planet plt;
 
 
 Game::Game(int window_width, int window_height, SDL_Window* window)
@@ -29,14 +30,14 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	time = 0.0f;
 	elapsed_time = 0.0f;
 
+	plt = Planet(Vector2(0, 0), &Sprite("data/Sprites/MainPlanet.tga", SPRITE_TYPE::PLANET,49,49));
+	
 	main_menu.loadTGA("data/main_menu.tga"); 
 	font.loadTGA("data/bitmap-font-white.tga"); //load bitmap-font image
 	minifont.loadTGA("data/mini-font-white-4x6.tga"); //load bitmap-font image
 	gameOver.loadTGA("data/game_over.tga");
 	player = Player(&Sprite("data/Sprites/spritesheet1.tga", SPRITE_TYPE::PLAYER, 14, 17),0,50);
-	//sprite.loadTGA(); //example to load an sprite
 	ship = Ship(&Sprite("data/Sprites/spritesheet_ship.tga",SPRITE_TYPE::SHIP, 30, 30),10,50);
-	//ship.getSprite()->ResizeSprite(15,12);
 	
 	
 	enableAudio(); //enable this line if you plan to add audio to your application
@@ -62,13 +63,14 @@ void Game::render(void)
 	//some new useful functions
 		
 		
-		
+	
 		if (state == 0)
 			current_stage = main_menu_stage;
 		
 		//framebuffer.drawText( toString(time), 1, 10, minifont,4,6);	//draws some text using a bitmap font in an image (assuming every char is 4x6)
-		if (state == 1) 
+		if (state == 1) {
 			current_stage = game_stage;
+		}
 		if (state == 2)
 			current_stage = controls_stage;
 		if (state == 3)

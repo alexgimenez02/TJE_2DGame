@@ -22,10 +22,12 @@ void MainMenuStage::update()
 	if (Input::isKeyPressed(SDL_SCANCODE_UP)) //if key up
 	{
 		menu_rec.y -= 10;
+		Sleep(1000);
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_DOWN)) //if key up
 	{
 		menu_rec.y += 10;
+		Sleep(1000);
 	}
 
 	if (menu_rec.y < 80) menu_rec.y = 80;
@@ -39,9 +41,9 @@ void MainMenuStage::update()
 			game->state = 2;
 		else if (menu_rec.y == 100)
 			game->must_exit = true;
-
+		Sleep(1000);
 	}
-	Sleep(50);
+	
 }
 
 void GameStage::render(Image* framebuffer)

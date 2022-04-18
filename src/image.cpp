@@ -134,7 +134,7 @@ void Image::drawImage(const Image& img, int x, int y, int imgx, int imgy, int im
 	for (int i = startx; i < endx; ++i)
 		for (int j = starty; j < endy; ++j)
 		{
-			const Color &c = img.getPixel(i - x + imgx, j - y + imgy);
+			const Color &c = img.getPixelSafe(i - x + imgx, j - y + imgy);
 			if (c.a == 0)
 				continue;
 			int pos = j * width + i;

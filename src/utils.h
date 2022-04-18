@@ -31,6 +31,7 @@ enum SPRITE_TYPE {
 	SHIP = 1,
 	OBJECT = 2,
 	MONSTER = 3,
+	PLANET = 4,
 	EMPTY = -1
 };
 

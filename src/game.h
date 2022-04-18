@@ -12,6 +12,7 @@
 #include "player.h"
 #include "ship.h"
 #include "stage.h"
+#include "planet.h"
 
 class Game
 {

@@ -21,6 +21,10 @@ public:
 };
 
 class GameStage : public Stage {
+private:
+	//vector<Planet> planets;
+	//bool isExploring;
+
 public:
 	virtual void render(Image* framebuffer);
 	virtual void update();
