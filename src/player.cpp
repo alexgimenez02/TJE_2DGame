@@ -57,6 +57,11 @@ void Player::die(bool which)
 	death = which;
 }
 
+Vector2 Player::getPosition()
+{
+	return pos;
+}
+
 bool Player::distanceToShip(Vector2 ship_pos) {
 	return pos.distance(ship_pos) < 10.0f;
 }

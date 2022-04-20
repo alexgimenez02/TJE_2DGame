@@ -32,7 +32,6 @@ enum SPRITE_TYPE {
 	OBJECT = 2,
 	MONSTER = 3,
 	PLANET = 4,
-	EMPTY = -1
 };
 
 //General functions **************

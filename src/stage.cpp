@@ -49,7 +49,8 @@ void MainMenuStage::update()
 void GameStage::render(Image* framebuffer)
 {
 	Game* game = Game::instance;
-	framebuffer->fill(Color(30, 80, 120));								//fills the image with one color
+	//framebuffer->fill(Color(30, 80, 120));								//fills the image with one color
+	//game->world->showWorld(framebuffer);
 	game->ship.RenderShip(framebuffer, game->time, game->ship_width, game->ship_height);
 	if (!game->ship.getPlayerInside()) game->player.RenderPlayer(framebuffer, game->time, game->sprite_width, game->sprite_height);
 }

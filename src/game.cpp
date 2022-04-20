@@ -1,8 +1,4 @@
 #include "game.h"
-#include "utils.h"
-#include "input.h"
-#include "image.h"
-#include "sprite.h"
 
 #include <cmath>
 using namespace std;
@@ -14,7 +10,8 @@ MainMenuStage* main_menu_stage;
 GameStage* game_stage;
 ControlsStage* controls_stage;
 GameOverStage* game_over_stage;
-Planet plt;
+//Planet plt;
+
 
 
 Game::Game(int window_width, int window_height, SDL_Window* window)
@@ -30,15 +27,15 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	time = 0.0f;
 	elapsed_time = 0.0f;
 
-	plt = Planet(Vector2(0, 0), &Sprite("data/Sprites/MainPlanet.tga", SPRITE_TYPE::PLANET,49,49));
+	//plt = Planet(Vector2(0, 0), &Sprite("data/Sprites/MainPlanet.tga", SPRITE_TYPE::PLANET,49,49));
 	
 	main_menu.loadTGA("data/main_menu.tga"); 
 	font.loadTGA("data/bitmap-font-white.tga"); //load bitmap-font image
 	minifont.loadTGA("data/mini-font-white-4x6.tga"); //load bitmap-font image
 	gameOver.loadTGA("data/game_over.tga");
+	
 	player = Player(&Sprite("data/Sprites/spritesheet1.tga", SPRITE_TYPE::PLAYER, 14, 17),0,50);
 	ship = Ship(&Sprite("data/Sprites/spritesheet_ship.tga",SPRITE_TYPE::SHIP, 30, 30),10,50);
-	
 	
 	enableAudio(); //enable this line if you plan to add audio to your application
 	

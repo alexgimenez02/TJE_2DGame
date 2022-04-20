@@ -26,6 +26,7 @@ public:
 	void MovePlayer(Vector2 movement);
 	void Jump(float speed);
 	void setPosition(Vector2 p);
+	Vector2 getPosition();
 	void die(bool which);
 	bool distanceToShip(Vector2 ship_pos);
 	 

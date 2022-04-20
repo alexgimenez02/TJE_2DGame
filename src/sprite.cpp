@@ -9,7 +9,7 @@ Sprite::Sprite(const char* filename,SPRITE_TYPE s_n,int sw, int sh) {
 		sprite_width = sw;
 		sprite_height = sh;
 	}
-	else sprite_name = SPRITE_TYPE::EMPTY;
+	else sprite_name = (SPRITE_TYPE)-1;
 }
 
 

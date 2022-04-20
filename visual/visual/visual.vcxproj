@@ -24,6 +24,7 @@
     <ClCompile Include="..\..\src\stage.cpp" />
     <ClCompile Include="..\..\src\synth.cpp" />
     <ClCompile Include="..\..\src\utils.cpp" />
+    <ClCompile Include="..\..\src\world.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\framework.h" />
@@ -39,6 +40,7 @@
     <ClInclude Include="..\..\src\stage.h" />
     <ClInclude Include="..\..\src\synth.h" />
     <ClInclude Include="..\..\src\utils.h" />
+    <ClInclude Include="..\..\src\world.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9DC7275D-D453-4D7A-AF99-62C8D8DB059B}</ProjectGuid>

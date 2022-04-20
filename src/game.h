@@ -6,13 +6,18 @@
 #define GAME_H
 
 #include "includes.h"
+
 #include "image.h"
+#include "input.h"
 #include "utils.h"
 #include "synth.h"
 #include "player.h"
 #include "ship.h"
 #include "stage.h"
-#include "planet.h"
+#include "gamemap.h"
+
+
+
 
 class Game
 {
@@ -40,7 +45,8 @@ public:
 	Player player;
 	Ship ship;
 
-	Image font, minifont, sprite, main_menu, gameOver, controls;
+
+	Image font, minifont, sprite, main_menu, gameOver, controls, mapTGA;
 	
 	//audio
 	Synth synth;
