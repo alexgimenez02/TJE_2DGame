@@ -1,52 +1,54 @@
 #include "world.h"
 
-World::World(){
-	Game* game = Game::instance;
-	player = game->player;
+World::World()
+{
+	player = Player(&Sprite("data/Sprites/spritesheet1.tga", SPRITE_TYPE::PLAYER, 14, 17), 0, 102);
+	ship = Ship(&Sprite("data/Sprites/spritesheet_ship.tga", SPRITE_TYPE::SHIP, 30, 30), 10, 102);
+
 	//worldMap = loadGameMap("");
 	for (int i = 0; i < NUMBEROFWORLDS; i++) {
-		string str = "data/mapa" + to_string(i) + ".tga";
+		string str = "data/mapa" + to_string(i) + ".map";
 		worlds[i] = loadGameMap(str.c_str());
 		worldsColiders[i] = loadGameMap(str.c_str());
-		
+
 	}
 	actualMap = worlds[currentWorld];
 	actualMapColider = worldsColiders[currentWorld];
 	tileset.loadTGA("data/tileset.tga");
-	background.loadTGA("data/space.tga");
+	background.loadTGA("data/space2.tga");
 	/*for (int i = 0; i < NUMBEROFPAGESTUTORIAL; i++)
 	{
 		string str2 = "tutorial"+i+".tga";
 		tutorials.loadTGA(str2.c_str());
 	}*/
-
-
 }
 
-void World::showWorld(Image* framebuffer){
-//size in pixels of a cell, we assume every row has 16 cells so the cell size must be image.width / 16
-int cs = tileset.width / 16;
-
-//for every cell
+void World::showWorld(Image* framebuffer, float elapsed_time)
+{
+	int cs = tileset.width / 16;
+	camOffset = player.getPosition() + playerToCam;
+	//for every cell
 	for (int x = 0; x < actualMap->width; ++x)
 		for (int y = 0; y < actualMap->height; ++y)
 		{
 			//get cell info
 			sCell& cell = actualMap->getCell(x, y);
-			if (cell.type == 0) //skip empty
+			if (cell.type == 0)  //skip empty
+			{
 				continue;
+			}
 			int type = (int)cell.type;
 			//compute tile pos in tileset image
 			int tilex = (type % 16) * cs; 	//x pos in tileset
 			int tiley = floor(type / 16) * cs;	//y pos in tileset
 			Area area(tilex, tiley, cs, cs); //tile area
-			int screenx = x * cs - player.getPosition().x; //place offset here if you want
-			int screeny = y * cs - player.getPosition().y; 
+			int screenx = x * cs - camOffset.x; //place offset here if you want
+			int screeny = y * cs - camOffset.y;
 			//avoid rendering out of screen stuff
-			if (screenx < -cs || screenx > framebuffer->width ||
-				screeny < -cs || screeny > framebuffer->height)
+			if (screenx < -cs || screenx > (int) framebuffer->width ||
+				screeny < -cs || screeny > (int) framebuffer->height)
 				continue;
-
+			
 			//draw region of tileset inside framebuffer
 			framebuffer->drawImage(tileset, 		//image
 				screenx, screeny, 	//pos in screen
@@ -54,24 +56,16 @@ int cs = tileset.width / 16;
 		}
 }
 
-Vector2i World::worldToCell(Vector2 worldSize)
-{ 
-	Vector2i mapOrigin = Vector2i(0, 0);
-	Vector2 posWorld = Vector2(20.0f, 20.0f);
+Vector2i World::worldToCell(Vector2 worldPos)
+{
 	int cellSize = 12;
-
-	Vector2i cellPos = (posWorld - mapOrigin) / cellSize;
-	posWorld = (cellPos * cellSize) + mapOrigin;
-
-	int halfCell = cellSize / 2;
-	posWorld = ((cellPos * cellSize) + mapOrigin) + Vector2i(halfCell, halfCell);
-	return posWorld;
+	return worldPos /12;
 }
 
 bool World::isValid(Vector2 worldPos)
 {
-	if (worldPos.x < 0 || worldPos.x > actualMap->width - 1) return false;
-	
-	if (actualMapColider->getCell(worldPos.x,worldPos.y).type != 0) return false;
-	return true;
+	Vector2i cellCoord = worldToCell(worldPos);
+	if (cellCoord.x < 0|| cellCoord.x > actualMap->width - 1) return false;
+
+	return actualMap->getCell(cellCoord.x, cellCoord.y).type == EMPTY;
 }

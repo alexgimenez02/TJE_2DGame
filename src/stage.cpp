@@ -19,40 +19,41 @@ void MainMenuStage::render(Image* framebuffer)
 void MainMenuStage::update()
 {
 	Game* game = Game::instance;
-	if (Input::isKeyPressed(SDL_SCANCODE_UP)) //if key up
+	if (Input::wasKeyPressed(SDL_SCANCODE_UP)) //if key up
 	{
 		menu_rec.y -= 10;
-		Sleep(1000);
+		
 	}
-	if (Input::isKeyPressed(SDL_SCANCODE_DOWN)) //if key up
+	if (Input::wasKeyPressed(SDL_SCANCODE_DOWN)) //if key up
 	{
 		menu_rec.y += 10;
-		Sleep(1000);
+		
 	}
 
 	if (menu_rec.y < 80) menu_rec.y = 80;
 	else if (menu_rec.y > 100) menu_rec.y = 100;
 
-	if (Input::wasKeyPressed(SDL_SCANCODE_A)) {
+	if (Input::wasKeyPressed(SDL_SCANCODE_RETURN)) {
 		if (menu_rec.y == 80) {
-			game->state = 1;
+			game->state = eState::GAME;
 		}
 		else if (menu_rec.y == 90)
-			game->state = 2;
+			game->state = eState::TUTORIAL;
 		else if (menu_rec.y == 100)
 			game->must_exit = true;
-		Sleep(1000);
+		if (!game->must_exit) Sleep(1000);
 	}
-	
+
 }
 
 void GameStage::render(Image* framebuffer)
 {
 	Game* game = Game::instance;
-	//framebuffer->fill(Color(30, 80, 120));								//fills the image with one color
-	//game->world->showWorld(framebuffer);
-	game->ship.RenderShip(framebuffer, game->time, game->ship_width, game->ship_height);
-	if (!game->ship.getPlayerInside()) game->player.RenderPlayer(framebuffer, game->time, game->sprite_width, game->sprite_height);
+	framebuffer->drawImage(game->world.background, framebuffer->width - game->world.camOffset.x,framebuffer->height - game->world.camOffset.y, Area(((int)(game->time * 2.0f) % 4)*160, 120, 160, 120));
+	game->world.showWorld(framebuffer,game->time);
+	//game->world.ship.RenderShip(framebuffer, game->time, game->ship_width, game->ship_height);
+	if (!game->world.ship.getPlayerInside()) game->world.player.RenderPlayer(framebuffer, game->time, game->sprite_width, game->sprite_height,game->world.camOffset);
+	
 }
 
 void GameStage::update()
@@ -63,33 +64,37 @@ void GameStage::update()
 	if (Input::isKeyPressed(SDL_SCANCODE_UP)) //if key up
 	{
 		movement.y -= game->speed * game->elapsed_time;
-		if (game->ship.getPlayerInside()) ship_movement.y -= game->speed * game->elapsed_time;
+		if (game->world.ship.getPlayerInside()) ship_movement.y -= game->speed * game->elapsed_time;
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_DOWN)) //if key down
 	{
 		movement.y += game->speed * game->elapsed_time;
-		if (game->ship.getPlayerInside()) ship_movement.y += game->speed * game->elapsed_time;
+		if (game->world.ship.getPlayerInside()) ship_movement.y += game->speed * game->elapsed_time;
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_LEFT)) //if key up
 	{
 		movement.x -= game->speed * game->elapsed_time;
-		if (game->ship.getPlayerInside()) ship_movement.x -= game->speed * game->elapsed_time;
+		if (game->world.ship.getPlayerInside()) ship_movement.x -= game->speed * game->elapsed_time;
 
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_RIGHT)) //if key down
 	{
 		movement.x += game->speed * game->elapsed_time;
-		if (game->ship.getPlayerInside()) ship_movement.x += game->speed * game->elapsed_time;
+		if (game->world.ship.getPlayerInside()) ship_movement.x += game->speed * game->elapsed_time;
 
 	}
-	game->player.MovePlayer(movement);
-	game->player.Jump(game->jump_speed -= game->elapsed_time);
-	game->ship.ShipMovement(ship_movement);
+	game->world.player.MovePlayer(movement, &game->world);
+	game->world.player.Jump(game->jump_speed -= game->elapsed_time);
+	game->world.ship.ShipMovement(ship_movement);
 
-	if (Input::isKeyPressed(SDL_SCANCODE_A)) //if key A was pressed
+	if (Input::wasKeyPressed(SDL_SCANCODE_A)) //if key A was pressed
 	{
 		game->jump_speed = 1.0;
 	}
+	if (Input::wasKeyPressed(SDL_SCANCODE_L))
+		cout << "Player pos: " << game->world.player.getPosition().toString() << endl;
+	if (Input::wasKeyPressed(SDL_SCANCODE_K))
+		game->world.player.setSpeed(100.0f);
 }
 
 void GameOverStage::render(Image* framebuffer)

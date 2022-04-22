@@ -1,16 +1,25 @@
 #ifndef WORLD_H
 #define WORLD_H
 
-#include "game.h"
+#include "player.h"
+#include "ship.h"
+#include "gamemap.h"
+#include "image.h"
+
 
 constexpr int NUMBEROFWORLDS = 3;
 constexpr int NUMBEROFPAGESTUTORIAL = 3;
+
+
 
 class World
 {
 public:
 	//atributes
+	Vector2 camOffset;
+	Vector2 playerToCam = Vector2(-70.0f, -60.0f);
 	Player player;
+	Ship ship;
 	GameMap* worldMap;
 	GameMap* worlds[NUMBEROFWORLDS];
 	GameMap* worldsColiders[NUMBEROFWORLDS];
@@ -19,15 +28,13 @@ public:
 	Image tileset;
 	Image background;
 	Image tutorial[NUMBEROFPAGESTUTORIAL];
-	Vector2 mapaActualPos = Vector2(1, 2);
-	Vector2 mapaActualPosC = Vector2(1, 2);
 	int currentWorld = 0;
 	int currentPage = 0;
 
 	//ctor
 	World();
 	//methods
-	void showWorld(Image* framebuffer);
+	void showWorld(Image* framebuffer,float elapsed_time);
 	Vector2i worldToCell(Vector2 worldSize);
 	bool isValid(Vector2 worldPos);
 };

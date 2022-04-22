@@ -15,15 +15,23 @@
 #include "ship.h"
 #include "stage.h"
 #include "gamemap.h"
+#include "world.h"
 
 
-
+enum eState {
+	MENU = 0,
+	GAME = 1,
+	TUTORIAL = 2,
+	GAMEOVER = 3
+};
 
 class Game
 {
+private:
+	void getCurrentStage(Image* framebuffer);
 public:
 	static Game* instance;
-
+	
 	//window
 	SDL_Window* window;
 	int window_width;
@@ -38,12 +46,11 @@ public:
 	float speed = 20.0f;
 	int blink = 0, iter = 0;
 	int menu_rec_x = 14, menu_rec_y = 79, menu_rec_h = 59, menu_rec_w = 11;
-	int state = 0;
+	eState state = eState::MENU;
 	int sprite_width = 14, ship_width = 30;
 	int sprite_height = 17, ship_height = 30;
 	float jump_speed = 0.0f;
-	Player player;
-	Ship ship;
+	World world;
 
 
 	Image font, minifont, sprite, main_menu, gameOver, controls, mapTGA;
@@ -56,6 +63,7 @@ public:
 
 	//main functions
 	void render( void );
+	
 	void update( double dt );
 
 	void showFramebuffer(Image* img);
@@ -75,6 +83,5 @@ public:
 	void enableAudio(); //opens audio channel to play sound
 	void onAudio(float* buffer, unsigned int len, double time, SDL_AudioSpec &audio_spec); //called constantly to fill the audio buffer
 };
-
 
 #endif 

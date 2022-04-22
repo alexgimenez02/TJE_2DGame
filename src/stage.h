@@ -1,8 +1,9 @@
 #ifndef STAGE_H
 #define STAGE_H
 
-#include "game.h"
+
 #include "input.h"
+#include "game.h"
 
 class Stage {
 public:
@@ -22,10 +23,9 @@ public:
 
 class GameStage : public Stage {
 private:
-	//vector<Planet> planets;
-	//bool isExploring;
-
+	bool starting = false;
 public:
+	
 	virtual void render(Image* framebuffer);
 	virtual void update();
 };

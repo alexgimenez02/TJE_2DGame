@@ -1,5 +1,6 @@
 #include "game.h"
 
+
 #include <cmath>
 using namespace std;
 
@@ -11,7 +12,6 @@ GameStage* game_stage;
 ControlsStage* controls_stage;
 GameOverStage* game_over_stage;
 //Planet plt;
-
 
 
 Game::Game(int window_width, int window_height, SDL_Window* window)
@@ -34,9 +34,6 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	minifont.loadTGA("data/mini-font-white-4x6.tga"); //load bitmap-font image
 	gameOver.loadTGA("data/game_over.tga");
 	
-	player = Player(&Sprite("data/Sprites/spritesheet1.tga", SPRITE_TYPE::PLAYER, 14, 17),0,50);
-	ship = Ship(&Sprite("data/Sprites/spritesheet_ship.tga",SPRITE_TYPE::SHIP, 30, 30),10,50);
-	
 	enableAudio(); //enable this line if you plan to add audio to your application
 	
 	main_menu_stage = new MainMenuStage();
@@ -44,7 +41,7 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	controls_stage = new ControlsStage();
 	game_over_stage = new GameOverStage();
 	current_stage = main_menu_stage;
-
+	world = World();
 	//synth.playSample("data/Monster chase.wav",1,true);
 	//synth.osc1.amplitude = 0.5;
 }
@@ -61,20 +58,23 @@ void Game::render(void)
 		
 		
 	
-		if (state == 0)
-			current_stage = main_menu_stage;
-		
-		//framebuffer.drawText( toString(time), 1, 10, minifont,4,6);	//draws some text using a bitmap font in an image (assuming every char is 4x6)
-		if (state == 1) {
-			current_stage = game_stage;
-		}
-		if (state == 2)
-			current_stage = controls_stage;
-		if (state == 3)
-			current_stage = game_over_stage;
+	getCurrentStage(&framebuffer);
 	//send image to screen
-	current_stage->render(&framebuffer);
 	showFramebuffer(&framebuffer);
+}
+void Game::getCurrentStage(Image* framebuffer) {
+	if (state == eState::MENU)
+		current_stage = main_menu_stage;
+
+	//framebuffer.drawText( toString(time), 1, 10, minifont,4,6);	//draws some text using a bitmap font in an image (assuming every char is 4x6)
+	if (state == eState::GAME) {
+		current_stage = game_stage;
+	}
+	if (state == eState::TUTORIAL)
+		current_stage = controls_stage;
+	if (state == eState::GAMEOVER)
+		current_stage = game_over_stage;
+	current_stage->render(framebuffer);
 }
 void checkIfInWindow(Vector2* mov,int width, int height) {
 	mov->x = mov->x > width || mov->x < 0 ? 0 : mov->x;
@@ -107,26 +107,26 @@ void Game::update(double seconds_elapsed)
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_Z)) //if key Z was pressed
 	{
-		if (player.distanceToShip(ship.getPosition()) && ship.getPlayerInside()) {
-			ship.setPlayerInside();
+		if (world.player.distanceToShip(world.ship.getPosition()) && world.ship.getPlayerInside()) {
+			world.ship.setPlayerInside();
 			Sleep(50);
 		}
 		else {
-			if (ship.getPlayerInside()) {
-				Vector2 last_ship_pos = ship.getPosition();
+			if (world.ship.getPlayerInside()) {
+				Vector2 last_ship_pos = world.ship.getPosition();
 				last_ship_pos.x -= 12.0f;
-				player.setPosition(last_ship_pos);
-				ship.setDirection(UP);
+				world.player.setPosition(last_ship_pos);
+				world.ship.setDirection(UP);
 			}
-			ship.setPlayerInside();
+			world.ship.setPlayerInside();
 			Sleep(50);
 		}
 		//cout << (ship.getPlayerInside() ? "Player entered the ship" : "Player exited the ship!") << endl;
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_P)) {
 		death = true;
-		player.die(death);
-		state = 3;
+		world.player.die(death);
+		state = eState::GAMEOVER;
 	}
 	//to read the gamepad state
 	if (Input::gamepads[0].isButtonPressed(A_BUTTON)) //if the A button is pressed
@@ -272,3 +272,4 @@ void Game::onAudio(float *buffer, unsigned int len, double time, SDL_AudioSpec& 
 	//fill the audio buffer using our custom retro synth
 	synth.generateAudio(buffer, len, audio_spec);
 }
+

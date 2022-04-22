@@ -1,7 +1,7 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
-#include "includes.h"
+
 #include "utils.h"
 #include "image.h"
 #include "utils.h"
