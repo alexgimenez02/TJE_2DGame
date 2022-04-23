@@ -2,6 +2,7 @@
 #define WORLD_H
 
 #include "player.h"
+#include "planet.h"
 #include "ship.h"
 #include "gamemap.h"
 #include "image.h"
@@ -9,6 +10,7 @@
 
 
 constexpr int NUMBEROFWORLDS = 3;
+constexpr int NUMBEROFPLANETS = 3;
 constexpr int NUMBEROFPAGESTUTORIAL = 3;
 
 
@@ -20,11 +22,11 @@ public:
 	Vector2 camOffset;
 	Vector2 playerToCam = Vector2(-70.0f, -40.0f);
 	vector<Vector2> spawnPoints;
+	Planet planets[NUMBEROFPLANETS];
 	Player player;
 	Ship ship;
 	GameMap* worldMap;
 	GameMap* worlds[NUMBEROFWORLDS];
-	GameMap* worldsColiders[NUMBEROFWORLDS];
 	GameMap* actualMap;
 	GameMap* actualMapColider;
 	Image tileset;

@@ -23,7 +23,8 @@ public:
 
 class GameStage : public Stage {
 private:
-	bool starting = false;
+	string scanner = "";
+	bool trigger = false, win = false;
 public:
 	
 	virtual void render(Image* framebuffer);

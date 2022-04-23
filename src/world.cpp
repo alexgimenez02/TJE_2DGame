@@ -4,15 +4,16 @@ World::World()
 {
 	player = Player(&Sprite("data/Sprites/spritesheet1.tga", SPRITE_TYPE::PLAYER, 14, 17), 0, 97);
 	ship = Ship(&Sprite("data/Sprites/spritesheet_ship.tga", SPRITE_TYPE::SHIP, 30, 30), 10, 97);
-
-	//worldMap = loadGameMap("");
+	planets[0] = Planet(Vector2(0, 0), &Sprite("data/Sprite/MainPlanet.tga", SPRITE_TYPE::PLANET, 50, 50));
+	planets[1] = Planet(Vector2(50,85),&Sprite("data/Sprite/BlackHole.tga",SPRITE_TYPE::PLANET,73,75));
+	planets[2] = Planet(Vector2(20,60),&Sprite("data/Sprite/DryPlanet.tga",SPRITE_TYPE::PLANET,50,50));
+	ship.setPlayerInside();
+	worldMap = loadGameMap("data/emptymap.map");
 	for (int i = 0; i < NUMBEROFWORLDS; i++) {
 		string str = "data/mapa" + to_string(i) + ".map";
 		worlds[i] = loadGameMap(str.c_str());
-		worldsColiders[i] = loadGameMap(str.c_str());
 	}
-	actualMap = worlds[currentWorld];
-	actualMapColider = worldsColiders[currentWorld];
+	actualMap = worldMap;
 	tileset.loadTGA("data/tileset.tga");
 	background.loadTGA("data/space2.tga");
 	/*for (int i = 0; i < NUMBEROFPAGESTUTORIAL; i++)
@@ -28,6 +29,11 @@ World::World()
 void World::showWorld(Image* framebuffer, float elapsed_time)
 {
 	int cs = tileset.width / 16;
+	if (actualMap == worldMap) {
+		planets[0].sprite.DrawSprite(framebuffer, planets[0].pos.x, planets[0].pos.y, ((int)(elapsed_time * 2.0f) % 5) * 50, 0);
+		planets[1].sprite.DrawSprite(framebuffer, planets[1].pos.x, planets[1].pos.y, ((int)(elapsed_time * 2.0f) % 5) * 73, 0);
+		planets[2].sprite.DrawSprite(framebuffer, planets[2].pos.x, planets[2].pos.y, ((int)(elapsed_time * 2.0f) % 5) * 50, 0);
+	}
 	//for every cell
 	for (int x = 0; x < actualMap->width; ++x)
 		for (int y = 0; y < actualMap->height; ++y)
@@ -77,9 +83,16 @@ bool World::isValid(Vector2 worldPos)
 void World::updateMap(int map)
 {
 	if (map != -1) {
-		currentWorld = map;
-		actualMap = worlds[currentWorld];
-		player.setPosition(spawnPoints[currentWorld]);
+		if (map < 3)
+		{
+
+			currentWorld = map;
+			actualMap = worlds[currentWorld];
+			player.setPosition(spawnPoints[currentWorld]);
+		}
+		else {
+			actualMap = worldMap;
+		}
 	}
 	if (player.death) {
 		playerToCam = Vector2(0.0f, 0.0f);

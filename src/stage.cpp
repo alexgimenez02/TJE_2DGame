@@ -49,12 +49,46 @@ void MainMenuStage::update()
 void GameStage::render(Image* framebuffer)
 {
 	Game* game = Game::instance;
-
-	game->world.camOffset = game->world.player.getPosition() + game->world.playerToCam;
-	framebuffer->drawImage(game->world.background, 0,0, Area(((int)(game->time * 2.0f) % 4)*160, 120, 160, 120));
+	Image& background = game->world.background;
+	if (!game->world.ship.getPlayerInside()) game->world.camOffset = game->world.player.getPosition() + game->world.playerToCam;
+	else game->world.camOffset = game->world.ship.getPosition() + game->world.playerToCam;
+	framebuffer->drawImage(background, 0,0, Area(((int)(game->time * 2.0f) % 4)*160, 0, 160, 120));
 	game->world.showWorld(framebuffer,game->time);
-	//game->world.ship.RenderShip(framebuffer, game->time, game->ship_width, game->ship_height);
-	if (!game->world.ship.getPlayerInside()) game->world.player.RenderPlayer(framebuffer, game->time, game->sprite_width, game->sprite_height,game->world.camOffset);
+	if(trigger)
+	{
+		if(game->world.currentWorld != 2){
+			if ((int)(game->time * 2.0f) % 3 == 0) scanner = "Scanning planet.";
+			else if ((int)(game->time * 2.0f) % 3 == 1) scanner = "Scanning planet..";
+			else if ((int)(game->time * 2.0f) % 3 == 2) scanner = "Scanning planet...";
+
+			if (game->world.player.getPosition().x >= 170) {
+				if (game->world.currentWorld == 0) {
+					scanner = "Valid planet!";
+					//game->synth.playSample("");
+					win = true;
+				}
+				else if (game->world.currentWorld == 1) {
+					scanner = "Invalid planet!";
+					Sleep(200);
+					game->state = GAMEOVER;
+				}
+			}
+			if((int)(game->time * 2.0f) % 6 == 5) {
+				scanner = "Insuficient height";
+				trigger = false;
+			}
+		}
+		else {
+			scanner = "Cannot scan this place";
+		}
+	}
+	if ((int)(game->time * 2.0f) % 5 == 0 && win) {
+		game->state = MENU;
+	}
+	framebuffer->drawText(scanner, 0, 0, game->font);
+	if (!trigger  && (int) (game->time * 2.0f) % 8 == 7) scanner.clear();
+	game->world.ship.RenderShip(framebuffer, game->time, game->ship_width, game->ship_height, game->world.camOffset);
+	if(!game->world.ship.getPlayerInside()) game->world.player.RenderPlayer(framebuffer, game->time, game->sprite_width, game->sprite_height,game->world.camOffset);
 }
 
 void GameStage::update()
@@ -86,21 +120,39 @@ void GameStage::update()
 	}
 	game->world.player.MovePlayer(movement, &game->world);
 	game->world.player.Jump(game->jump_speed -= game->elapsed_time, &game->world);
-	game->world.ship.ShipMovement(ship_movement);
+	game->world.ship.ShipMovement(ship_movement, &game->world);
 
 	if (Input::wasKeyPressed(SDL_SCANCODE_A)) //if key A was pressed
 	{
 		game->jump_speed = 1.2;
 	}
+	if (Input::wasKeyPressed(SDL_SCANCODE_Z))
+	{
+		trigger = !trigger;
+		if (game->world.player.distanceToShip(game->world.ship.getPosition()) && game->world.ship.getPlayerInside()) {
+			game->world.ship.setPlayerInside();
+		}
+		else {
+			if (game->world.ship.getPlayerInside()) {
+				Vector2 last_ship_pos = game->world.ship.getPosition();
+				last_ship_pos.x -= 12.0f;
+				game->world.player.setPosition(last_ship_pos);
+				game->world.ship.setDirection(UP);
+			}
+			game->world.ship.setPlayerInside();
+		}
+	}
 	if (Input::wasKeyPressed(SDL_SCANCODE_L))
 		cout << "Player pos: " << game->world.player.getPosition().toString() << endl;
 	if (Input::wasKeyPressed(SDL_SCANCODE_K))
 		game->world.player.setSpeed(2.0f);
-
-	if ((game->world.currentWorld != 2 && game->world.actualMap->height * 8 <= game->world.player.getPosition().y) || (game->world.currentWorld == 2 && game->world.actualMap->height * 12 <= game->world.player.getPosition().y))
+	if(game->world.actualMap != game->world.worldMap)
 	{
-		cout << "You died!" << endl;
-		game->state = GAMEOVER;
+		if ((game->world.currentWorld != 2 && game->world.actualMap->height * 8 <= game->world.player.getPosition().y) || (game->world.currentWorld == 2 && game->world.actualMap->height * 12 <= game->world.player.getPosition().y))
+		{
+			//cout << "You died!" << endl;
+			game->state = GAMEOVER;
+		}
 	}
 }
 
@@ -116,6 +168,12 @@ void GameOverStage::render(Image* framebuffer)
 
 void GameOverStage::update()
 {
+	Game* game = Game::instance;
+	if (Input::wasKeyPressed(SDL_SCANCODE_A))
+	{
+		game->state = MENU;
+		game->synth.stopAll();
+	}
 }
 
 void ControlsStage::render(Image* framebuffer)
@@ -129,4 +187,12 @@ void ControlsStage::render(Image* framebuffer)
 
 void ControlsStage::update()
 {
+	if (Input::wasKeyPressed(SDL_SCANCODE_LEFT))
+	{
+
+	}
+	if (Input::wasKeyPressed(SDL_SCANCODE_RIGHT))
+	{
+
+	}
 }

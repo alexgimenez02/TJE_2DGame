@@ -1,6 +1,7 @@
 #ifndef PLANET_H
 #define PLANET_H
-#include "game.h"
+#include "sprite.h"
+#include "utils.h"
 class Planet
 {
 public:

@@ -68,25 +68,28 @@ void Player::MovePlayer(Vector2 movement, World* world){
 	}
 }
 void Player::Jump(float speed, World* world) {
-	if (speed != 0.0) {
-		Vector2 target = Vector2(pos.x,pos.y - speed);
-		Vector2 target1 = target - Vector2(10, 0);
-		Vector2 target2 = target - Vector2(10, -17);
-		Vector2 target3 = target - Vector2(-10, -17);
-		Vector2 target4 = target - Vector2(-10, 0);
-		if (speed < -1.05f) {
-			speed = 0.0f;
-		}
-		else {
-			if (world->isValid(target1) && world->isValid(target2) && world->isValid(target3) && world->isValid(target4))
-				pos = target;
-			else if (world->isValid(Vector2(target1.x, pos.y)) && world->isValid(Vector2(target2.x, pos.y)) && world->isValid(Vector2(target3.x, pos.y)) && world->isValid(Vector2(target4.x, pos.y)))
-				pos = Vector2(target.x, pos.y);
-			else if (world->isValid(Vector2(pos.x, target1.y)) && world->isValid(Vector2(pos.x, target2.y)) && world->isValid(Vector2(pos.x, target3.y)) && world->isValid(Vector2(pos.x, target4.y)))
-				pos = Vector2(pos.x, target.y);
+	if(!world->ship.getPlayerInside())
+	{
+		if (speed != 0.0) {
+			Vector2 target = Vector2(pos.x,pos.y - speed);
+			Vector2 target1 = target - Vector2(10, 0);
+			Vector2 target2 = target - Vector2(10, -17);
+			Vector2 target3 = target - Vector2(-10, -17);
+			Vector2 target4 = target - Vector2(-10, 0);
+			if (speed < -1.05f) {
+				speed = 0.0f;
+			}
+			else {
+				if (world->isValid(target1) && world->isValid(target2) && world->isValid(target3) && world->isValid(target4))
+					pos = target;
+				else if (world->isValid(Vector2(target1.x, pos.y)) && world->isValid(Vector2(target2.x, pos.y)) && world->isValid(Vector2(target3.x, pos.y)) && world->isValid(Vector2(target4.x, pos.y)))
+					pos = Vector2(target.x, pos.y);
+				else if (world->isValid(Vector2(pos.x, target1.y)) && world->isValid(Vector2(pos.x, target2.y)) && world->isValid(Vector2(pos.x, target3.y)) && world->isValid(Vector2(pos.x, target4.y)))
+					pos = Vector2(pos.x, target.y);
 			
+			}
+			isJumping = speed == 0.0f ? false : true;
 		}
-		isJumping = speed == 0.0f ? false : true;
 	}
 	
 }

@@ -8,6 +8,8 @@
 #include "synth.h"
 #include "sprite.h"
 
+class World;
+
 class Ship
 {
 private:
@@ -21,8 +23,8 @@ public:
 	Ship();
 	Ship(Sprite *spt, int x, int y);
 	//methods
-	void RenderShip(Image* framebuffer, float time, int sprite_width, int sprite_height);
-	void ShipMovement(Vector2 movement);
+	void RenderShip(Image* framebuffer, float time, int sprite_width, int sprite_height, Vector2 offset);
+	void ShipMovement(Vector2 movement, World *world);
 	void setPlayerInside();
 	void setDirection(PLAYER_DIR d);
 	Sprite* getSprite();

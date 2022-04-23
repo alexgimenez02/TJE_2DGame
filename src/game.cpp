@@ -102,8 +102,9 @@ void Game::update(double seconds_elapsed)
 		swap = 2;
 		
 	}
-	if (Input::isKeyPressed(SDL_SCANCODE_RIGHT)) //if key down
+	if (Input::isKeyPressed(SDL_SCANCODE_4)) //if key down
 	{
+		swap = 3;
 	}
 	world.updateMap(swap);
 	if(swap != -1) cout << "World changed!" << "\nNow in: " << world.currentWorld << endl;
@@ -114,18 +115,8 @@ void Game::update(double seconds_elapsed)
 	}
 	if (Input::wasKeyPressed(SDL_SCANCODE_Z)) //if key Z was pressed
 	{
-		if (world.player.distanceToShip(world.ship.getPosition()) && world.ship.getPlayerInside()) {
-			world.ship.setPlayerInside();
-		}
-		else {
-			if (world.ship.getPlayerInside()) {
-				Vector2 last_ship_pos = world.ship.getPosition();
-				last_ship_pos.x -= 12.0f;
-				world.player.setPosition(last_ship_pos);
-				world.ship.setDirection(UP);
-			}
-			world.ship.setPlayerInside();
-		}
+		/*
+		*/
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_P)) {
 		state = eState::GAMEOVER;
