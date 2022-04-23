@@ -5,6 +5,7 @@
 #include "ship.h"
 #include "gamemap.h"
 #include "image.h"
+#include <vector>
 
 
 constexpr int NUMBEROFWORLDS = 3;
@@ -17,7 +18,8 @@ class World
 public:
 	//atributes
 	Vector2 camOffset;
-	Vector2 playerToCam = Vector2(-70.0f, -60.0f);
+	Vector2 playerToCam = Vector2(-70.0f, -40.0f);
+	vector<Vector2> spawnPoints;
 	Player player;
 	Ship ship;
 	GameMap* worldMap;
@@ -37,6 +39,7 @@ public:
 	void showWorld(Image* framebuffer,float elapsed_time);
 	Vector2i worldToCell(Vector2 worldSize);
 	bool isValid(Vector2 worldPos);
+	void updateMap(int map);
 };
 
 #endif

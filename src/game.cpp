@@ -88,28 +88,34 @@ void Game::update(double seconds_elapsed)
 	Vector2 movement, ship_movement;
 
 	//Read the keyboard state, to see all the keycodes: https://wiki.libsdl.org/SDL_Keycode
-	if (Input::isKeyPressed(SDL_SCANCODE_UP)) //if key up
+	int swap = -1;
+	if (Input::wasKeyPressed(SDL_SCANCODE_1)) //if key up
 	{		
+		swap = 0;
 	}
-	if (Input::isKeyPressed(SDL_SCANCODE_DOWN)) //if key down
+	if (Input::wasKeyPressed(SDL_SCANCODE_2)) //if key down
 	{
+		swap = 1;
 	}
-	if (Input::isKeyPressed(SDL_SCANCODE_LEFT)) //if key up
+	if (Input::wasKeyPressed(SDL_SCANCODE_3)) //if key up
 	{		
+		swap = 2;
+		
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_RIGHT)) //if key down
 	{
 	}
+	world.updateMap(swap);
+	if(swap != -1) cout << "World changed!" << "\nNow in: " << world.currentWorld << endl;
 
 	//example of 'was pressed'
 	if (Input::isKeyPressed(SDL_SCANCODE_A)) //if key A was pressed
 	{
 	}
-	if (Input::isKeyPressed(SDL_SCANCODE_Z)) //if key Z was pressed
+	if (Input::wasKeyPressed(SDL_SCANCODE_Z)) //if key Z was pressed
 	{
 		if (world.player.distanceToShip(world.ship.getPosition()) && world.ship.getPlayerInside()) {
 			world.ship.setPlayerInside();
-			Sleep(50);
 		}
 		else {
 			if (world.ship.getPlayerInside()) {
@@ -119,13 +125,9 @@ void Game::update(double seconds_elapsed)
 				world.ship.setDirection(UP);
 			}
 			world.ship.setPlayerInside();
-			Sleep(50);
 		}
-		//cout << (ship.getPlayerInside() ? "Player entered the ship" : "Player exited the ship!") << endl;
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_P)) {
-		death = true;
-		world.player.die(death);
 		state = eState::GAMEOVER;
 	}
 	//to read the gamepad state

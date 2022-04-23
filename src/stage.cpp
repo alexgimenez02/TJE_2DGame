@@ -49,11 +49,12 @@ void MainMenuStage::update()
 void GameStage::render(Image* framebuffer)
 {
 	Game* game = Game::instance;
-	framebuffer->drawImage(game->world.background, framebuffer->width - game->world.camOffset.x,framebuffer->height - game->world.camOffset.y, Area(((int)(game->time * 2.0f) % 4)*160, 120, 160, 120));
+
+	game->world.camOffset = game->world.player.getPosition() + game->world.playerToCam;
+	framebuffer->drawImage(game->world.background, 0,0, Area(((int)(game->time * 2.0f) % 4)*160, 120, 160, 120));
 	game->world.showWorld(framebuffer,game->time);
 	//game->world.ship.RenderShip(framebuffer, game->time, game->ship_width, game->ship_height);
 	if (!game->world.ship.getPlayerInside()) game->world.player.RenderPlayer(framebuffer, game->time, game->sprite_width, game->sprite_height,game->world.camOffset);
-	
 }
 
 void GameStage::update()
@@ -63,12 +64,12 @@ void GameStage::update()
 	Vector2 ship_movement;
 	if (Input::isKeyPressed(SDL_SCANCODE_UP)) //if key up
 	{
-		movement.y -= game->speed * game->elapsed_time;
+		//movement.y -= game->speed * game->elapsed_time;
 		if (game->world.ship.getPlayerInside()) ship_movement.y -= game->speed * game->elapsed_time;
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_DOWN)) //if key down
 	{
-		movement.y += game->speed * game->elapsed_time;
+		//movement.y += game->speed * game->elapsed_time;
 		if (game->world.ship.getPlayerInside()) ship_movement.y += game->speed * game->elapsed_time;
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_LEFT)) //if key up
@@ -84,17 +85,23 @@ void GameStage::update()
 
 	}
 	game->world.player.MovePlayer(movement, &game->world);
-	game->world.player.Jump(game->jump_speed -= game->elapsed_time);
+	game->world.player.Jump(game->jump_speed -= game->elapsed_time, &game->world);
 	game->world.ship.ShipMovement(ship_movement);
 
 	if (Input::wasKeyPressed(SDL_SCANCODE_A)) //if key A was pressed
 	{
-		game->jump_speed = 1.0;
+		game->jump_speed = 1.2;
 	}
 	if (Input::wasKeyPressed(SDL_SCANCODE_L))
 		cout << "Player pos: " << game->world.player.getPosition().toString() << endl;
 	if (Input::wasKeyPressed(SDL_SCANCODE_K))
-		game->world.player.setSpeed(100.0f);
+		game->world.player.setSpeed(2.0f);
+
+	if ((game->world.currentWorld != 2 && game->world.actualMap->height * 8 <= game->world.player.getPosition().y) || (game->world.currentWorld == 2 && game->world.actualMap->height * 12 <= game->world.player.getPosition().y))
+	{
+		cout << "You died!" << endl;
+		game->state = GAMEOVER;
+	}
 }
 
 void GameOverStage::render(Image* framebuffer)
