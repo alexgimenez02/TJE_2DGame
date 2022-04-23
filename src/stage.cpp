@@ -118,9 +118,11 @@ void GameStage::update()
 		if (game->world.ship.getPlayerInside()) ship_movement.x += game->speed * game->elapsed_time;
 
 	}
+
 	game->world.player.MovePlayer(movement, &game->world);
 	game->world.player.Jump(game->jump_speed -= game->elapsed_time, &game->world);
 	game->world.ship.ShipMovement(ship_movement, &game->world);
+	
 
 	if (Input::wasKeyPressed(SDL_SCANCODE_A)) //if key A was pressed
 	{
@@ -128,7 +130,9 @@ void GameStage::update()
 	}
 	if (Input::wasKeyPressed(SDL_SCANCODE_Z))
 	{
-		trigger = !trigger;
+		if (game->world.actualMap != game->world.worldMap) {
+			trigger = !trigger;
+		}
 		if (game->world.player.distanceToShip(game->world.ship.getPosition()) && game->world.ship.getPlayerInside()) {
 			game->world.ship.setPlayerInside();
 		}
@@ -144,6 +148,8 @@ void GameStage::update()
 	}
 	if (Input::wasKeyPressed(SDL_SCANCODE_L))
 		cout << "Player pos: " << game->world.player.getPosition().toString() << endl;
+	if(Input::wasKeyPressed(SDL_SCANCODE_I))
+		cout << "Ship pos: " << game->world.ship.getPosition().toString() << endl;
 	if (Input::wasKeyPressed(SDL_SCANCODE_K))
 		game->world.player.setSpeed(2.0f);
 	if(game->world.actualMap != game->world.worldMap)

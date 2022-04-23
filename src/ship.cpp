@@ -28,7 +28,7 @@ void Ship::RenderShip(Image* framebuffer, float time, int sprite_width, int spri
 	}
 	ship_x *= sprite_width;
 	ship_y *= sprite_height;
-	sprite.DrawSprite(framebuffer, pos.x, pos.y, ship_x, ship_y);
+	sprite.DrawSprite(framebuffer, renderShipPos.x, renderShipPos.y, ship_x, ship_y);
 }
 
 void Ship::ShipMovement(Vector2 movement, World *world)

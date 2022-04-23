@@ -4,9 +4,9 @@ World::World()
 {
 	player = Player(&Sprite("data/Sprites/spritesheet1.tga", SPRITE_TYPE::PLAYER, 14, 17), 0, 97);
 	ship = Ship(&Sprite("data/Sprites/spritesheet_ship.tga", SPRITE_TYPE::SHIP, 30, 30), 10, 97);
-	planets[0] = Planet(Vector2(0, 0), &Sprite("data/Sprite/MainPlanet.tga", SPRITE_TYPE::PLANET, 50, 50));
-	planets[1] = Planet(Vector2(50,85),&Sprite("data/Sprite/BlackHole.tga",SPRITE_TYPE::PLANET,73,75));
-	planets[2] = Planet(Vector2(20,60),&Sprite("data/Sprite/DryPlanet.tga",SPRITE_TYPE::PLANET,50,50));
+	planets[0] = Planet(Vector2(0, 0), &Sprite("data/Sprites/MainPlanet.tga", SPRITE_TYPE::PLANET, 50, 50));
+	planets[1] = Planet(Vector2(100,85),&Sprite("data/Sprites/BlackHole.tga",SPRITE_TYPE::PLANET,75,73));
+	planets[2] = Planet(Vector2(20,120),&Sprite("data/Sprites/DryPlanet.tga",SPRITE_TYPE::PLANET,50,50));
 	ship.setPlayerInside();
 	worldMap = loadGameMap("data/emptymap.map");
 	for (int i = 0; i < NUMBEROFWORLDS; i++) {
@@ -29,18 +29,13 @@ World::World()
 void World::showWorld(Image* framebuffer, float elapsed_time)
 {
 	int cs = tileset.width / 16;
-	if (actualMap == worldMap) {
-		planets[0].sprite.DrawSprite(framebuffer, planets[0].pos.x, planets[0].pos.y, ((int)(elapsed_time * 2.0f) % 5) * 50, 0);
-		planets[1].sprite.DrawSprite(framebuffer, planets[1].pos.x, planets[1].pos.y, ((int)(elapsed_time * 2.0f) % 5) * 73, 0);
-		planets[2].sprite.DrawSprite(framebuffer, planets[2].pos.x, planets[2].pos.y, ((int)(elapsed_time * 2.0f) % 5) * 50, 0);
-	}
 	//for every cell
 	for (int x = 0; x < actualMap->width; ++x)
 		for (int y = 0; y < actualMap->height; ++y)
 		{
 			//get cell info
 			sCell& cell = actualMap->getCell(x, y);
-			if (cell.type == 0)  //skip empty
+			if (cell.type == 0 && actualMap != worldMap)  //skip empty
 			{
 				continue;
 			}
@@ -60,10 +55,17 @@ void World::showWorld(Image* framebuffer, float elapsed_time)
 				continue;
 			
 			//draw region of tileset inside framebuffer
-			framebuffer->drawImage(tileset, 		//image
+			if(actualMap != worldMap)
+				framebuffer->drawImage(tileset, 		//image
 				screenx, screeny, 	//pos in screen
 				area); 		//area
+			if (actualMap == worldMap) {
+				if(planets[0].pos.x > screenx|| planets[0].pos.y > screeny) planets[0].sprite.DrawSprite(framebuffer, planets[0].pos.x, planets[0].pos.y, ((int)(elapsed_time * 2.0f) % 5) * 50, 0);
+				if (planets[1].pos.x > screenx || planets[1].pos.y > screeny) planets[1].sprite.DrawSprite(framebuffer, planets[1].pos.x, planets[1].pos.y, ((int)(elapsed_time * 2.0f) % 5) * 75, 0);
+				if (planets[2].pos.x > screenx || planets[2].pos.y > screeny) planets[2].sprite.DrawSprite(framebuffer, planets[2].pos.x, planets[2].pos.y, ((int)(elapsed_time * 2.0f) % 5) * 50, 0);
+			}
 		}
+		
 }
 
 Vector2i World::worldToCell(Vector2 worldPos)

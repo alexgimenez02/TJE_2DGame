@@ -191,7 +191,6 @@ int main(int argc, char **argv)
 
 	//launch the game (game is a global variable)
 	game = new Game(w, h, window);
-
 	//main loop, application gets inside here till user closes it
 	mainLoop();
 

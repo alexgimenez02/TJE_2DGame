@@ -39,7 +39,7 @@ void Player::RenderPlayer(Image* framebuffer, float time, int sprite_width, int 
 }
 void Player::MovePlayer(Vector2 movement, World* world){
 
-	if(!death){
+	if(!death) {
 		if (movement.x >= 0) dir = RIGHT;
 		else dir = LEFT;
 		isMoving = movement.x != 0.0f || movement.y != 0.0f;
@@ -57,13 +57,15 @@ void Player::MovePlayer(Vector2 movement, World* world){
 			pos = Vector2(target.x, pos.y);
 		else if (world->isValid(Vector2(pos.x, target1.y)) && world->isValid(Vector2(pos.x, target2.y)) && world->isValid(Vector2(pos.x, target3.y)) && world->isValid(Vector2(pos.x, target4.y)))
 			pos = Vector2(pos.x, target.y);
-		if (world->isValid(target - Vector2(0, -18)) && !isJumping) {
+		if (!world->ship.getPlayerInside()) {
+			if (world->isValid(target - Vector2(0, -18)) && !isJumping) {
 
-			pos.y += 1;
-			isFalling = true;
-		}
-		else {
-			isFalling = false;
+				pos.y += 1;
+				isFalling = true;
+			}
+			else {
+				isFalling = false;
+			}
 		}
 	}
 }
