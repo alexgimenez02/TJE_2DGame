@@ -11,7 +11,6 @@ MainMenuStage* main_menu_stage;
 GameStage* game_stage;
 ControlsStage* controls_stage;
 GameOverStage* game_over_stage;
-//Planet plt;
 
 
 Game::Game(int window_width, int window_height, SDL_Window* window)
@@ -27,108 +26,100 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	time = 0.0f;
 	elapsed_time = 0.0f;
 
-	//plt = Planet(Vector2(0, 0), &Sprite("data/Sprites/MainPlanet.tga", SPRITE_TYPE::PLANET,49,49));
 	
-	main_menu.loadTGA("data/main_menu.tga"); 
+	//tga loads
+	main_menu.loadTGA("data/main_menu.tga"); //load main_menu
 	font.loadTGA("data/bitmap-font-white.tga"); //load bitmap-font image
 	minifont.loadTGA("data/mini-font-white-4x6.tga"); //load bitmap-font image
-	gameOver.loadTGA("data/game_over.tga");
+	gameOver.loadTGA("data/game_over.tga"); //load game_over
 	
 	enableAudio(); //enable this line if you plan to add audio to your application
 	
+	//stage load
 	main_menu_stage = new MainMenuStage();
 	game_stage = new GameStage();
 	controls_stage = new ControlsStage();
 	game_over_stage = new GameOverStage();
 	current_stage = main_menu_stage;
-	world = World();
-	//synth.playSample("data/Monster chase.wav",1,true);
-	//synth.osc1.amplitude = 0.5;
+	world = World(); //create instance of world
+	synth.playSample("data/HowItEnds.wav", 0.75, true); //We load the main menu music
 }
 //what to do when the image has to be draw
 void Game::render(void)
 {
 	//Create a new Image (or we could create a global one if we want to keep the previous frame)
 	Image framebuffer(160, 120); //do not change framebuffer size
-
-	//add your code here to fill the framebuffer
-	//...
-
-	//some new useful functions
-		
-		
-	
-	getCurrentStage(&framebuffer);
+	getCurrentStage(&framebuffer); //We check the current stage
 	//send image to screen
-	showFramebuffer(&framebuffer);
+	showFramebuffer(&framebuffer); 
 }
-void Game::getCurrentStage(Image* framebuffer) {
-	if (state == eState::MENU)
-		current_stage = main_menu_stage;
 
-	//framebuffer.drawText( toString(time), 1, 10, minifont,4,6);	//draws some text using a bitmap font in an image (assuming every char is 4x6)
-	if (state == eState::GAME) {
-		current_stage = game_stage;
-	}
-	if (state == eState::TUTORIAL)
-		current_stage = controls_stage;
-	if (state == eState::GAMEOVER)
-		current_stage = game_over_stage;
-	current_stage->render(framebuffer);
-}
-void checkIfInWindow(Vector2* mov,int width, int height) {
-	mov->x = mov->x > width || mov->x < 0 ? 0 : mov->x;
-	mov->y = mov->y > height || mov->y < 0 ? 0 : mov->y;
+
+/*
+getCurrentStage -> checks for the actual stage loaded
+*/
+void Game::getCurrentStage(Image* framebuffer) {
+
+	if (state == eState::MENU)current_stage = main_menu_stage;
+	if (state == eState::GAME) current_stage = game_stage;
+	if (state == eState::TUTORIAL)current_stage = controls_stage;
+	if (state == eState::GAMEOVER)current_stage = game_over_stage;
+	current_stage->render(framebuffer); //When we checked which stage we are in, we render it
 }
 void Game::update(double seconds_elapsed)
 {
 	current_stage->update();
 	//Add here your update method
 	//...
-	Vector2 movement, ship_movement;
 
 	//Read the keyboard state, to see all the keycodes: https://wiki.libsdl.org/SDL_Keycode
+	//Debug options (Swap between worlds)
 	int swap = -1;
 	if (Input::wasKeyPressed(SDL_SCANCODE_1)) //if key up
 	{		
 		swap = 0;
+		synth.samples_playback->stop();
+		synth.playSample("data/Tenebras.wav", 0.75, true);
 	}
 	if (Input::wasKeyPressed(SDL_SCANCODE_2)) //if key down
 	{
 		swap = 1;
+		synth.samples_playback->stop();
+		synth.playSample("data/Tenebras.wav", 0.75, true);
 	}
 	if (Input::wasKeyPressed(SDL_SCANCODE_3)) //if key up
-	{		
+	{
 		swap = 2;
-		
+		synth.samples_playback->stop();
+		synth.playSample("data/Monster chase.wav", 0.75, true);
+
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_4)) //if key down
 	{
 		swap = 3;
+		synth.samples_playback->stop();
+		synth.playSample("data/Tenebras.wav", 0.75, true);
 	}
 	world.updateMap(swap);
-	if(swap != -1) cout << "World changed!" << "\nNow in: " << world.currentWorld << endl;
+	if(swap != -1) cout << "World changed!" << "\nNow in: " << world.currentWorld << endl; //Debug log
 
 	//example of 'was pressed'
-	if (Input::isKeyPressed(SDL_SCANCODE_A)) //if key A was pressed
+	if (Input::isKeyPressed(SDL_SCANCODE_B)) //if key A was pressed
 	{
+		synth.samples_playback->stop(); //Debug. Stop music
 	}
 	if (Input::wasKeyPressed(SDL_SCANCODE_Z)) //if key Z was pressed
 	{
-		/*
-		*/
-	}
-	if (Input::isKeyPressed(SDL_SCANCODE_P)) {
-		state = eState::GAMEOVER;
+		
 	}
 	//to read the gamepad state
-	if (Input::gamepads[0].isButtonPressed(A_BUTTON)) //if the A button is pressed
+	//Reset the world state
+	if (reset_world)
 	{
-	}
-
-	if (Input::gamepads[0].direction & PAD_UP) //left stick pointing up
-	{
-		bgcolor.set(0, 255, 0);
+		reset_world = false;
+		world = World();
+		synth.playSample("data/HowItEnds.wav", 0.75, true);
+		
 	}
 }
 
@@ -137,7 +128,7 @@ void Game::onKeyDown( SDL_KeyboardEvent event )
 {
 	switch(event.keysym.sym)
 	{
-		case SDLK_ESCAPE: must_exit = true; break; //ESC key, kill the app
+ 		case SDLK_ESCAPE: must_exit = true; break; //ESC key, kill the app
 	}
 }
 

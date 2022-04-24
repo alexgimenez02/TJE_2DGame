@@ -35,6 +35,7 @@ public:
 	bool distanceToShip(Vector2 ship_pos);
 	void setSpeed(float spd);
 	void die(World* world);
+	Sprite getSprite();
 
 };
 

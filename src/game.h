@@ -6,7 +6,6 @@
 #define GAME_H
 
 #include "includes.h"
-
 #include "image.h"
 #include "input.h"
 #include "utils.h"
@@ -42,9 +41,9 @@ public:
     float time;
 	float elapsed_time;
 	int fps;
-	bool must_exit, death = false;
+	bool must_exit, death = false, reset_world = false;
 	float speed = 20.0f;
-	int blink = 0, iter = 0;
+	int iter = 0, tut_page = 0;
 	int menu_rec_x = 14, menu_rec_y = 79, menu_rec_h = 59, menu_rec_w = 11;
 	eState state = eState::MENU;
 	int sprite_width = 14, ship_width = 30;

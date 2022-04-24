@@ -23,7 +23,7 @@ public:
 	Vector2 playerToCam = Vector2(-70.0f, -40.0f);
 	vector<Vector2> spawnPoints;
 	Planet planets[NUMBEROFPLANETS];
-	Player player;
+	Player player, monster;
 	Ship ship;
 	GameMap* worldMap;
 	GameMap* worlds[NUMBEROFWORLDS];

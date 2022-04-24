@@ -21,3 +21,10 @@ Planet::Planet(Vector2 p, Sprite* spr)
 	height = spr->getHeight();
 }
 
+void Planet::RenderPlanet(Image* framebuffer, float time, int sprite_width , Vector2 offset)
+{
+	Vector2 renderPlanetPos = this->pos - offset;
+	int planet_x = ((int)(time * 2.0f) % 5) * sprite_width;
+	sprite.DrawSprite(framebuffer, renderPlanetPos.x, renderPlanetPos.y, planet_x, 0);
+}
+

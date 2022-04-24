@@ -23,7 +23,3 @@ void GameMap::SetCell(int x, int y, eCellType tp)
 	data[x + y * width].type = tp;
 }
 
-
-
-
-//int celdax = (posx - map_origin.x) / cellsize;

@@ -2,28 +2,39 @@
 
 World::World()
 {
+	//Load every element of the game world
 	player = Player(&Sprite("data/Sprites/spritesheet1.tga", SPRITE_TYPE::PLAYER, 14, 17), 0, 97);
 	ship = Ship(&Sprite("data/Sprites/spritesheet_ship.tga", SPRITE_TYPE::SHIP, 30, 30), 10, 97);
 	planets[0] = Planet(Vector2(0, 0), &Sprite("data/Sprites/MainPlanet.tga", SPRITE_TYPE::PLANET, 50, 50));
-	planets[1] = Planet(Vector2(100,85),&Sprite("data/Sprites/BlackHole.tga",SPRITE_TYPE::PLANET,75,73));
-	planets[2] = Planet(Vector2(20,120),&Sprite("data/Sprites/DryPlanet.tga",SPRITE_TYPE::PLANET,50,50));
-	ship.setPlayerInside();
-	worldMap = loadGameMap("data/emptymap.map");
+	planets[1] = Planet(Vector2(200,50),&Sprite("data/Sprites/DryPlanet.tga",SPRITE_TYPE::PLANET,50,50));
+	planets[2] = Planet(Vector2(150, 225), &Sprite("data/Sprites/BlackHole.tga", SPRITE_TYPE::PLANET, 75, 73));
+	ship.setPlayerInside(); //Set the player inside the ship
+	worldMap = loadGameMap("data/emptymap.map"); //Fist map (Just an empty .map of 32x32
+	monster = Player(&Sprite("data/Sprites/spritesheet2.tga", SPRITE_TYPE::MONSTER, 14, 17), 1023, 246);
+	//Load all stages
 	for (int i = 0; i < NUMBEROFWORLDS; i++) {
 		string str = "data/mapa" + to_string(i) + ".map";
 		worlds[i] = loadGameMap(str.c_str());
 	}
+	//Set starting map
 	actualMap = worldMap;
+	//Load the tileset and background
 	tileset.loadTGA("data/tileset.tga");
-	background.loadTGA("data/space2.tga");
-	/*for (int i = 0; i < NUMBEROFPAGESTUTORIAL; i++)
+	background.loadTGA("data/fondo1.tga");
+
+	//Load of the pages of the tutorial
+	for (int i = 0; i < NUMBEROFPAGESTUTORIAL; i++)
 	{
-		string str2 = "tutorial"+i+".tga";
-		tutorials.loadTGA(str2.c_str());
-	}*/
+		string str2 = "data/tutorial"+ to_string(i + 1) +".tga";
+		tutorial[i].loadTGA(str2.c_str());
+	}
+
+	//Spawnpoints setting
 	spawnPoints.push_back(Vector2(0, 96));
 	spawnPoints.push_back(Vector2(0, 96));
-	spawnPoints.push_back(Vector2(61, 258));
+	spawnPoints.push_back(Vector2(70, 257));
+
+	
 }
 
 void World::showWorld(Image* framebuffer, float elapsed_time)
@@ -59,23 +70,21 @@ void World::showWorld(Image* framebuffer, float elapsed_time)
 				framebuffer->drawImage(tileset, 		//image
 				screenx, screeny, 	//pos in screen
 				area); 		//area
-			if (actualMap == worldMap) {
-				if(planets[0].pos.x > screenx|| planets[0].pos.y > screeny) planets[0].sprite.DrawSprite(framebuffer, planets[0].pos.x, planets[0].pos.y, ((int)(elapsed_time * 2.0f) % 5) * 50, 0);
-				if (planets[1].pos.x > screenx || planets[1].pos.y > screeny) planets[1].sprite.DrawSprite(framebuffer, planets[1].pos.x, planets[1].pos.y, ((int)(elapsed_time * 2.0f) % 5) * 75, 0);
-				if (planets[2].pos.x > screenx || planets[2].pos.y > screeny) planets[2].sprite.DrawSprite(framebuffer, planets[2].pos.x, planets[2].pos.y, ((int)(elapsed_time * 2.0f) % 5) * 50, 0);
-			}
+			
 		}
 		
 }
 
 Vector2i World::worldToCell(Vector2 worldPos)
 {
+	//Get the position of each tile
 	int cellSize = 12;
 	return worldPos /12;
 }
 
 bool World::isValid(Vector2 worldPos)
 {
+	//Check if the position is valid
 	Vector2i cellCoord = worldToCell(worldPos);
 	if (cellCoord.x < 0|| cellCoord.x > actualMap->width - 1) return false;
 
@@ -84,7 +93,9 @@ bool World::isValid(Vector2 worldPos)
 
 void World::updateMap(int map)
 {
+	//Update which map will be rendered
 	if (map != -1) {
+		//Load the 3 worlds
 		if (map < 3)
 		{
 
@@ -92,11 +103,9 @@ void World::updateMap(int map)
 			actualMap = worlds[currentWorld];
 			player.setPosition(spawnPoints[currentWorld]);
 		}
+		//Load the worldMap
 		else {
 			actualMap = worldMap;
 		}
-	}
-	if (player.death) {
-		playerToCam = Vector2(0.0f, 0.0f);
 	}
 }

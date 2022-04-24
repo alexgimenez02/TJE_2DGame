@@ -12,6 +12,7 @@ public:
 	Planet();
 	Planet(Vector2 p, int w, int h);
 	Planet(Vector2 p, Sprite* spr);
+	void RenderPlanet(Image* framebuffer, float time, int sprite_width, Vector2 offset);
 };
 
 #endif PLANET_H

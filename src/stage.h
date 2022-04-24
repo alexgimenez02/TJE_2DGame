@@ -4,7 +4,6 @@
 
 #include "input.h"
 #include "game.h"
-
 class Stage {
 public:
 	virtual void render(Image* framebuffer) {};
@@ -32,6 +31,10 @@ public:
 };
 
 class ControlsStage : public Stage {
+private: 
+	int new_page = 0;
+	void renderPlayerShow(Image* framebuffer);
+	void renderShipShow(Image* framebuffer);
 public:
 	virtual void render(Image* framebuffer);
 	virtual void update();
@@ -39,6 +42,8 @@ public:
 
 class GameOverStage : public Stage {
 public:
+	bool once = true;
+
 	virtual void render(Image* framebuffer);
 	virtual void update();
 };

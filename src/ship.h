@@ -29,6 +29,7 @@ public:
 	void setDirection(PLAYER_DIR d);
 	Sprite* getSprite();
 	Vector2 getPosition();
+	void setPosition(int x, int y);
 	bool getPlayerInside();
 };
 
