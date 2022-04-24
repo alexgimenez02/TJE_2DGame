@@ -6,7 +6,6 @@
     <ClCompile Include="..\..\src\image.cpp" />
     <ClCompile Include="..\..\src\input.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
-    <ClCompile Include="..\..\src\sprite.cpp" />
     <ClCompile Include="..\..\src\synth.cpp" />
     <ClCompile Include="..\..\src\utils.cpp" />
     <ClCompile Include="..\..\src\player.cpp">
@@ -21,6 +20,7 @@
       <Filter>ObjetosDeEscena</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\world.cpp" />
+    <ClCompile Include="..\..\src\sprite.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\framework.h" />
@@ -28,7 +28,6 @@
     <ClInclude Include="..\..\src\image.h" />
     <ClInclude Include="..\..\src\includes.h" />
     <ClInclude Include="..\..\src\input.h" />
-    <ClInclude Include="..\..\src\sprite.h" />
     <ClInclude Include="..\..\src\synth.h" />
     <ClInclude Include="..\..\src\utils.h" />
     <ClInclude Include="..\..\src\ship.h">
@@ -43,6 +42,7 @@
       <Filter>ObjetosDeEscena</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\world.h" />
+    <ClInclude Include="..\..\src\sprite.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ObjetosDeEscena">
